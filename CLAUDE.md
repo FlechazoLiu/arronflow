@@ -25,6 +25,11 @@ tutorial, not a reference sheet, and follows this order:
 7. **Key bindings** — cheat-sheet table.
 8. **Tuning & exploring** — the 30-second adjust loop, preview/reference commands, and a
    short FAQ.
+9. **References** — verified links to official documentation (docs hub, full configuration
+   reference, keybind/action reference, feature deep-dives, source repo), each with a
+   one-line "when to reach for it". The page is the tutorial; official docs are the depth.
+   Only link canonical URLs that have been verified (fetch them, or know them cold) —
+   never guessed paths.
 
 Tone: formal but easy to read — plain English, short sentences, runnable commands. In chat,
 teach the same content narratively in Chinese; the English doc is the durable version.

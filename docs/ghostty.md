@@ -228,3 +228,15 @@ Common tweaks:
   a config-error dialog, the message names the exact bad line — fix and reload again.
 - **Where did my old config go?** `scripts/install.sh` never deletes: the previous live
   config was moved to `~/.config/ghostty.bak.<timestamp>` before the symlink was created.
+
+## References
+
+This page is the tutorial; the official docs are the depth. Reach for these:
+
+| When you need…                                                     | Where                                                                        |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| Anything else about Ghostty                                        | [Docs hub](https://ghostty.org/docs)                                         |
+| Any option beyond the ones above, with official help text          | [Option reference](https://ghostty.org/docs/config/reference) — the web version of `+show-config --default --docs` |
+| Keybind trigger syntax (`global:`, `performable:`, …) and every action | [Keybind docs](https://ghostty.org/docs/config/keybind)                  |
+| What shell integration injects, per shell, and troubleshooting     | [Shell integration](https://ghostty.org/docs/features/shell-integration)     |
+| Source code; changelog lives under Releases                        | [ghostty-org/ghostty](https://github.com/ghostty-org/ghostty)                |
