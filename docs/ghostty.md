@@ -182,6 +182,7 @@ losing the beginning.
 | `Cmd+Alt+arrows`     | Move between splits             |
 | `Cmd+Shift+E`        | Equalize split sizes            |
 | `Cmd+Shift+F`        | Zoom (maximize/restore) a split |
+| `Cmd+Enter` / `Ctrl+Cmd+F` | Toggle fullscreen (either key) |
 | `Cmd+ +`/`-`/`0`     | Font bigger / smaller / reset   |
 | `Cmd+Up` / `Cmd+Down`| Jump between shell prompts      |
 | `Cmd+Shift+,`        | **Reload this config**          |

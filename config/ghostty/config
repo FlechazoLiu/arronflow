@@ -121,6 +121,11 @@ keybind = cmd+plus=increase_font_size:1
 keybind = cmd+minus=decrease_font_size:1
 keybind = cmd+zero=reset_font_size
 
+# Fullscreen: both the macOS convention and the terminal tradition work.
+# The mode (native vs. non-native) is decided by macos-non-native-fullscreen.
+keybind = cmd+ctrl+f=toggle_fullscreen
+keybind = cmd+enter=toggle_fullscreen
+
 # Reload this file without restarting Ghostty
 keybind = cmd+shift+comma=reload_config
 
