@@ -9,6 +9,26 @@ fresh machine or shared via `scripts/bootstrap.sh` + `scripts/install.sh`.
 - All repo content — docs, config comments, commit messages — is written in **English**.
 - Conversation with the user happens in **Chinese**.
 
+## Documentation style
+
+The user is learning these tools as we configure them. Every tool page in `docs/` is a
+tutorial, not a reference sheet, and follows this order:
+
+1. **Status** — configured or pending.
+2. **Role** — one short paragraph: what the tool does in this stack.
+3. **Background** — the concepts a newcomer needs *before* any settings (e.g. terminal
+   vs. shell vs. multiplexer). Teach first, configure second.
+4. **Why this tool** — honest one-line comparisons with alternatives.
+5. **Installation** — exact runnable commands.
+6. **Our configuration** — walk through every setting, grouped in the same sections as the
+   config file; every value carries its *why*, including taste decisions.
+7. **Key bindings** — cheat-sheet table.
+8. **Tuning & exploring** — the 30-second adjust loop, preview/reference commands, and a
+   short FAQ.
+
+Tone: formal but easy to read — plain English, short sentences, runnable commands. In chat,
+teach the same content narratively in Chinese; the English doc is the durable version.
+
 ## Layout
 
 - `config/<tool>/` — canonical config files. Deployed as symlinks; the link manifest lives in

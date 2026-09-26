@@ -56,11 +56,19 @@ The whole environment is this repo:
 3. `scripts/install.sh` symlinks the configs,
 4. pick up exactly where you left off.
 
+## Decisions
+
+Resolved tool-by-tool; each decision is made in its own setup step.
+
+- [x] **Theme family: Atom One Dark** (Ghostty step, 2026-09-26) — dark background, gentle
+      contrast, easy on the eyes for long sessions. tmux, Neovim, yazi, and lazygit all
+      follow this palette.
+- [x] **Transparency: subtle** (Ghostty step) — `background-opacity = 0.9` +
+      `background-blur-radius = 30`: see the desktop without hurting readability.
+
 ## Pending decisions
 
-Filled in tool-by-tool during setup; each gets resolved in its own step.
-
-- [ ] Shared theme family across all tools (decide in the Ghostty step)
 - [ ] Shell prompt: Powerlevel10k vs Starship (decide in the shell step)
 - [ ] tmux prefix key and pane-navigation style (decide in the tmux step)
 - [ ] Neovim distribution: hand-rolled lazy.nvim vs distro (decide in the Neovim step)
+- [ ] `macos-option-as-alt` in Ghostty — decide together with tmux keybindings
