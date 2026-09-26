@@ -1,0 +1,12 @@
+# macOS noise
+.DS_Store
+
+# Editor swap files
+*.swp
+*.swo
+
+# Runtime state — configs are symlinked, so tools may write into this repo.
+# Keep generated state out of git while config files themselves are tracked.
+config/lazygit/state.yml
+config/ghostty/auto/
+config/tmux/plugins/
