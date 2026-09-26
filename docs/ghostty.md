@@ -128,6 +128,7 @@ own blue (`#61afef`) so nothing clashes.
 | `window-padding-x/-y`      | `10` / `8`    | Text never touches the window edge                 |
 | `window-save-state`        | `always`      | Reopen with the same tabs and splits               |
 | `window-theme`             | `auto`        | Window chrome follows system appearance            |
+| `macos-non-native-fullscreen` | `visible-menu` | Keeps transparency working in fullscreen (see FAQ) |
 
 The transparency pair is a taste knob: opacity toward `1.0` reads better in direct sunlight;
 toward `0.8` shows more desktop. The blur radius (roughly 0–60+) is what keeps blurred
@@ -213,6 +214,13 @@ Common tweaks:
 
 ## FAQ
 
+- **Transparency disappears in fullscreen.** Native macOS fullscreen moves the window to
+  its own Space over an opaque system backdrop, so there is nothing to see through —
+  `background-opacity` and blur silently stop working. This affects every terminal, not
+  just Ghostty. Fix: `macos-non-native-fullscreen` (we ship `visible-menu`) makes
+  fullscreen a regular maximized window, where transparency works. Toggle fullscreen with
+  `Ctrl+Cmd+F`. If you prefer the native experience (own Space, slide animation), set it
+  to `false` and accept an opaque fullscreen.
 - **Icons render as boxes □.** The Nerd Font isn't active. Check `font-family` spelling,
   and that `brew bundle install` installed the font; then reload.
 - **A config edit does nothing.** Save the file, then press `Cmd+Shift+,`. If Ghostty shows

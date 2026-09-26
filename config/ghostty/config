@@ -33,7 +33,7 @@ theme = Atom One Dark
 # Subtle see-through: 90% opacity over a 30px blur. Raise opacity toward 1.0
 # for more readability, lower it for more desktop showing through. The blur
 # keeps text legible even over a busy wallpaper.
-background-opacity = 0.90
+background-opacity = 0.75
 background-blur-radius = 30
 # Borderless look: the title bar blends into the terminal background.
 macos-titlebar-style = transparent
@@ -44,6 +44,13 @@ window-padding-y = 8
 window-save-state = always
 # Window chrome follows the system light/dark appearance.
 window-theme = auto
+# Native macOS fullscreen moves the window to its own Space over an opaque
+# system backdrop, which silently kills background-opacity/blur. Non-native
+# fullscreen is a regular window maximized to the screen, so transparency
+# keeps working; "visible-menu" keeps the menu bar on screen.
+# Toggle fullscreen with Ctrl+Cmd+F. Values: true | visible-menu |
+# padded-notch (clears the notch) | false (back to native fullscreen).
+macos-non-native-fullscreen = visible-menu
 
 # Decide in the tmux step: makes Option work as Alt/Meta for tmux bindings.
 # macos-option-as-alt = true
