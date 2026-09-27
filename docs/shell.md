@@ -150,18 +150,17 @@ Ordered top to bottom:
 
 ### Powerlevel10k ([config/zsh/p10k.zsh](../config/zsh/p10k.zsh))
 
-The prompt is the one configured personally with p10k's wizard on 2026-05-20 and used
-daily since — restored verbatim (1745 wizard-generated lines, zero machine-specific
-paths) and now versioned in this repo. The wizard's choices, i.e. what you see:
+The prompt is the user's own `p10k configure` wizard output (first configured
+2026-05-20, regenerated 2026-09-27; 1745 machine-generated lines, zero machine-specific
+paths), versioned in this repo. The wizard's current choices, i.e. what you see:
 
-- **classic style, two lines, right frame, flat heads/tails** — line 1 carries `dir` and
-  `vcs` (git state) on the left; the right side carries signals that appear only when
-  relevant: exit code of a failed command, command duration, background jobs, and
-  environment segments (`anaconda` for conda, `nvm` for Node, …). Line 2 is the `❯`
-  prompt character.
-- **compact, concise spacing** — information-dense without visual noise.
-- **transient prompt** — once a command finishes, its prompt collapses to a plain
-  one-line copy, keeping scrollback readable.
+- **classic style, two lines, right frame — sharp heads, vertical separators** — line 1
+  carries `dir` and `vcs` (git state) on the left; the right side carries signals that
+  appear only when relevant: exit code of a failed command, command duration, background
+  jobs, and environment segments (`anaconda` for conda, `nvm` for Node, …). Line 2 is
+  the `❯` prompt character.
+- **Nerd Font v3 icons, few and small** — icons only where they earn their place.
+- **sparse spacing, one empty line between prompts** — each command block breathes.
 - **instant prompt** — the cached prompt paints immediately while zsh initializes.
 
 Do not hand-edit the file casually — it is machine-generated. Restyle with
