@@ -180,8 +180,10 @@ each color chosen by role, not by taste alone:
   format dropped them, which hid the zoom indicator.
 - `status-right` — dim clock in the same block shape as the session
   name, mirror triangle on its left edge.
-- `pane-border-style` / `pane-active-border-style` — pane frames are
-  nearly invisible while idle and turn blue where the focus is.
+- Pane borders — deliberately left at tmux **defaults** (tried themed
+  and reverted). The default is not a plain color but a condition:
+  green focus border, yellow while the pane is in copy mode, red under
+  `synchronize-panes` — pane borders double as a mode indicator.
 - `mode-style` — the copy-mode selection highlight, exactly Atom's
   selection tone; `message-style` — the `prefix :` prompt, same
   treatment.
