@@ -56,7 +56,7 @@ Built tool-by-tool — each row lights up as the step-by-step setup progresses.
 | ------------------- | ---------- | ---------- |
 | Repo skeleton, scripts, docs structure | ✅ | ✅ |
 | Ghostty             | ✅         | ✅         |
-| tmux                | ⬜         | ⬜         |
+| tmux                | 🔄         | 🔄         |
 | Neovim              | ⬜         | ⬜         |
 | lazygit             | ⬜         | ⬜         |
 | yazi                | ⬜         | ⬜         |
