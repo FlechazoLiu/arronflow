@@ -113,7 +113,8 @@ Ordered top to bottom:
 
 1. **Greeting** — `fastfetch`, guarded by `command -v` so a fresh clone before `brew
    bundle` doesn't error. The old `neofetch` cost 200–300 ms per shell; fastfetch is the
-   Rust successor at milliseconds.
+   Rust successor at milliseconds. Its display list is curated in
+   [config/fastfetch/config.jsonc](../config/fastfetch/config.jsonc) — see below.
 2. **p10k instant prompt** — sources the cached last prompt so the prompt is on screen
    instantly while the rest of this file (and `~/.zshrc.local`, ~1 s of dev environment)
    still loads. Placement rule inherited from the pre-arronflow zshrc: it must come
@@ -166,6 +167,19 @@ paths), versioned in this repo. The wizard's current choices, i.e. what you see:
 Do not hand-edit the file casually — it is machine-generated. Restyle with
 `p10k configure`, which rewrites `~/.p10k.zsh`; since that is a symlink into this repo,
 `git diff` shows exactly what the wizard changed — commit what you keep.
+
+### fastfetch ([config/fastfetch/config.jsonc](../config/fastfetch/config.jsonc))
+
+The greeting shown once per shell. Curated for a laptop where the interesting facts are
+few: `os · host · uptime · packages · shell · display · wmtheme · theme · terminal ·
+cpu · gpu · memory · swap · disk · locale`, then the color palette. Deliberately
+absent: `separator` (the dashed line under the title), `kernel`, `font`, `cursor`,
+`localip`, `battery`, `poweradapter`, `wm`, and modules that print nothing on macOS
+anyway (`de`, `icons`, `terminalfont`).
+
+The `modules` array is the complete display list — what is not named does not print.
+Adjust by editing it; module names are the lowercase words fastfetch prints on the
+left. `fastfetch --gen-config` regenerates the full default list for reference.
 
 ## Key bindings & aliases worth memorizing
 
@@ -227,4 +241,5 @@ Do not hand-edit the file casually — it is machine-generated. Restyle with
 | zoxide                                         | [ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide)    |
 | fzf — keys and customization                   | [junegunn/fzf](https://github.com/junegunn/fzf)                |
 | eza / bat / fd / ripgrep / fastfetch           | [eza-community/eza](https://github.com/eza-community/eza) · [sharkdp/bat](https://github.com/sharkdp/bat) · [sharkdp/fd](https://github.com/sharkdp/fd) · [BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) · [fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch) |
+| fastfetch — config syntax & module catalog     | [fastfetch wiki — Configuration](https://github.com/fastfetch-cli/fastfetch/wiki/Configuration) |
 | The shell itself                               | `man zsh` (and `man zshoptions`, `man zshall`)                  |

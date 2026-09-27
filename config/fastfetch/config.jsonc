@@ -1,0 +1,37 @@
+// ==========================================================================
+// fastfetch — shell greeting, arronflow
+// ==========================================================================
+// Deployed to ~/.config/fastfetch/ by scripts/install.sh (directory symlink).
+// The "modules" array is the full, explicit display list — anything not
+// listed does not print. Walkthrough: docs/shell.md
+//
+// Curated for a laptop where the interesting facts are few. Deliberately
+// absent: separator (dashed line under the title), kernel, font, cursor,
+// localip, battery, poweradapter, wm — plus modules that print nothing on
+// macOS anyway (de, icons, terminalfont).
+//
+// Re-add anything by naming it here; see the full default list with:
+//   fastfetch --gen-config
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  "modules": [
+    "title",
+    "os",
+    "host",
+    "uptime",
+    "packages",
+    "shell",
+    "display",
+    "wmtheme",
+    "theme",
+    "terminal",
+    "cpu",
+    "gpu",
+    "memory",
+    "swap",
+    "disk",
+    "locale",
+    "break",
+    "colors"
+  ]
+}

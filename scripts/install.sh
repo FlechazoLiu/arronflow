@@ -16,6 +16,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SOURCES=(
   "config/zsh/zshrc"
   "config/zsh/p10k.zsh"
+  "config/fastfetch"
   "config/ghostty"
   "config/tmux"
   "config/nvim"
@@ -25,6 +26,7 @@ SOURCES=(
 TARGETS=(
   "$HOME/.zshrc"
   "$HOME/.p10k.zsh"
+  "$HOME/.config/fastfetch"
   "$HOME/.config/ghostty"
   "$HOME/.config/tmux"
   "$HOME/.config/nvim"
