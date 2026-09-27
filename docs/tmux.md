@@ -5,10 +5,10 @@
 **In progress** — the configuration lives in this repo and is deployed
 (`config/tmux/tmux.conf` → `~/.config/tmux/tmux.conf`, symlinked by
 `scripts/install.sh`). Done so far: migration of the pre-repo config, base
-options, pane/window key bindings, and the complete copy-and-paste layer
-(mouse selection, system clipboard, copy mode). Pending: status-bar theme
-pass, `escape-time` tuning, and the sessions/scripting lessons.
-Last updated 2026-09-27.
+options, pane/window key bindings, the complete copy-and-paste layer
+(mouse selection, system clipboard, copy mode), and the Atom One Dark
+theme pass. Pending: `escape-time` tuning, the sessions/scripting lesson,
+and a final keybinding-optimization pass. Last updated 2026-09-27.
 
 ## Role
 
@@ -152,12 +152,42 @@ Walkthrough of `config/tmux/tmux.conf`, grouped as the file is.
   tuning loop.
 - `prefix t` opens a new window in the current directory.
 
-### Status line
+### Theme (status bar, panes, prompts)
 
-Minimal 256-color scheme (dark bar, light text, cyan session name,
-dim clock), carried over verbatim from the pre-repo config. A theme pass
-(true-color, pane borders, maybe an indicator set) is pending — to be
-designed deliberately, not tweaked piecemeal.
+The status line is three segments — `status-left`, the window list,
+`status-right` — rendered from *format strings* that mix three kinds of
+markup: plain text, `#{variable}` interpolations, and `#[style]` ranges.
+Colors may be named (`red`), 256-index (`colour117`), or true-color hex
+(`#61afef`; tmux ≥ 3.2). The bar repaints every `status-interval` seconds
+(default 15) — only relevant once `#()` shell commands appear in the
+string; ours has none.
+
+The theme anchors to Atom One Dark — the same palette as Ghostty — with
+each color chosen by role, not by taste alone:
+
+- `status-style` — bar background `#21252b` is Atom's *gutter* tone, one
+  step darker than the editor background `#282c34`, so the bar reads as
+  furniture, not content.
+- `status-left` — session name on Atom's selection tone `#3e4451` in the
+  palette blue `#61afef` (the same blue as the Ghostty cursor), closed by
+  a sharp Powerline triangle — the separator family the p10k prompt
+  uses. `status-left-length` must cover the whole block or tmux
+  truncates it (the default is only 10).
+- window list — inactive windows keep a dim number (`#5c6370`) and a
+  quiet name (`#abb2bf`); the current window is the only blue block on
+  the bar, so the eye always knows the focus. `#F` appends window flags
+  (`Z` zoomed, `M` marked, `#` activity, `-` last window) — the pre-repo
+  format dropped them, which hid the zoom indicator.
+- `status-right` — dim clock in the same block shape as the session
+  name, mirror triangle on its left edge.
+- `pane-border-style` / `pane-active-border-style` — pane frames are
+  nearly invisible while idle and turn blue where the focus is.
+- `mode-style` — the copy-mode selection highlight, exactly Atom's
+  selection tone; `message-style` — the `prefix :` prompt, same
+  treatment.
+
+No decorative icons — the prompt style is sparse and the theme follows;
+adding one later is a one-line change to a format string.
 
 ## Key bindings
 
@@ -191,6 +221,10 @@ Defaults worth knowing already (lesson pending): `prefix d` detach,
 - **Toggle the mouse** to feel what it does: `tmux toggle-mouse`.
 - **Inspect live state**: `tmux show -g | grep -i mouse`,
   `tmux list-keys`, `tmux list-keys -T copy-mode-vi`.
+- **Theme levers**: center the window list (`set -g status-justify
+  centre`), put an icon in the session block (any Nerd Font glyph —
+  Maple Mono NF CN carries them), or show live info like a git branch
+  via `#(...)` — remember it re-runs every `status-interval` seconds.
 - **Clipboard end-to-end test**: drag-select text in a pane → release →
   Cmd+V anywhere. The same test through a remote tmux (over ssh) is the
   reason `set-clipboard` beats pbcopy piping.
