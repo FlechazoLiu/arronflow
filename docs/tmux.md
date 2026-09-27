@@ -7,8 +7,9 @@
 `scripts/install.sh`). Done so far: migration of the pre-repo config, base
 options, pane/window key bindings, the complete copy-and-paste layer
 (mouse selection, system clipboard, copy mode), the Atom One Dark
-theme pass, and `escape-time` pinning. Pending: the sessions/scripting
-lesson and a final keybinding-optimization pass. Last updated 2026-09-27.
+theme pass, `escape-time` pinning, and the session-workflow helper
+(`scripts/session.sh`). Pending: a final keybinding-optimization pass.
+Last updated 2026-09-27.
 
 ## Role
 
@@ -223,6 +224,12 @@ Defaults worth knowing already (lesson pending): `prefix d` detach,
 
 ## Tuning & exploring
 
+- **One-command sessions**: `scripts/session.sh <name> [dir]` attaches to
+  session `<name>`, creating it rooted at `dir` first if it does not
+  exist; with no arguments it lists sessions. Inside tmux it uses
+  `switch-client` instead of a nested `tmux attach` (which tmux refuses:
+  "sessions should be nested with care"). Targets use `=name` for exact
+  matching — plain names also prefix-match `name-*` sessions.
 - **The 30-second loop**: edit `config/tmux/tmux.conf` → `prefix r` →
   feel the change. No restart, no re-login; running panes are untouched.
 - **Toggle the mouse** to feel what it does: `tmux toggle-mouse`.

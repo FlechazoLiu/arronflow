@@ -45,6 +45,8 @@ teach the same content narratively in Chinese; the English doc is the durable ve
   then `install.sh`).
 - `scripts/install.sh` — idempotent symlink deployment; backs up existing files as
   `*.bak.<timestamp>`.
+- `scripts/session.sh` — create-or-attach helper for named tmux sessions (the daily
+  "one session per project" workflow).
 
 ## Working rules
 
