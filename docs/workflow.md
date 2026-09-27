@@ -65,10 +65,21 @@ Resolved tool-by-tool; each decision is made in its own setup step.
       follow this palette.
 - [x] **Transparency: subtle** (Ghostty step) — `background-opacity = 0.9` +
       `background-blur-radius = 30`: see the desktop without hurting readability.
+- [x] **Prompt: Starship, everywhere** (shell step, 2026-09-27) — one engine in every
+      terminal replaces the old "Powerlevel10k outside Ghostty, Starship inside" split.
+      Tokyo Night *structure* (two-line, quiet frame, right-aligned time) wearing the
+      Atom One Dark *palette*; segments: directory, git branch/status, command duration
+      (≥ 2 s), time, language runtimes.
+- [x] **Plugin lineup** (shell step) — OMz: `git`, `aliases`, `extract`, plus external
+      `zsh-autosuggestions` and `zsh-syntax-highlighting`. Dropped: `z` (replaced by
+      zoxide), `web-search` (Raycast covers it), Powerlevel10k theme. `neofetch` greeting
+      replaced by `fastfetch`.
+- [x] **Dev environments stay out of the repo** (shell step) — conda/nvm/sdkman/JAVA/Qt
+      config moves to `~/.zshrc.local` when the workflow phase is done; the repo zshrc
+      loads that file if present.
 
 ## Pending decisions
 
-- [ ] Shell prompt: Powerlevel10k vs Starship (decide in the shell step)
 - [ ] tmux prefix key and pane-navigation style (decide in the tmux step)
 - [ ] Neovim distribution: hand-rolled lazy.nvim vs distro (decide in the Neovim step)
 - [ ] `macos-option-as-alt` in Ghostty — decide together with tmux keybindings

@@ -16,8 +16,8 @@ if ! command -v brew >/dev/null 2>&1; then
 fi
 brew bundle install --file "$REPO_ROOT/Brewfile"
 
-echo "==> 2/3 Oh My Zsh + custom plugins/themes"
-# Plugin/theme list gets finalized in the shell setup step; adjust there.
+echo "==> 2/3 Oh My Zsh + external plugins"
+# External OMz plugins live in custom/ so `omz update` never clobbers them.
 ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
   git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
@@ -34,7 +34,6 @@ clone_if_missing() {
 
 clone_if_missing https://github.com/zsh-users/zsh-autosuggestions     "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
 clone_if_missing https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
-clone_if_missing https://github.com/romkatv/powerlevel10k.git         "$ZSH_CUSTOM/themes/powerlevel10k"
 
 echo "==> 3/3 Deploy configs"
 "$REPO_ROOT/scripts/install.sh"

@@ -1,0 +1,60 @@
+# ==========================================================================
+# zsh configuration — arronflow
+# ==========================================================================
+# Canonical copy: config/zsh/zshrc, deployed to ~/.zshrc (symlink).
+# Reload cleanly with: exec zsh
+# Walkthrough: docs/shell.md
+#
+# Portability rule: this file contains ONLY workflow configuration.
+# Machine-specific setup (conda, nvm, sdkman, JAVA_HOME, private PATHs)
+# belongs in ~/.zshrc.local, which is loaded at the bottom and never
+# enters this repository.
+
+# --- Greeting ---------------------------------------------------------------
+# fastfetch: the fast Rust successor to neofetch. Guarded so a fresh clone
+# before `brew bundle` does not error on every shell start.
+command -v fastfetch >/dev/null 2>&1 && fastfetch
+
+# --- Oh My Zsh --------------------------------------------------------------
+export ZSH="$HOME/.oh-my-zsh"
+
+# Prompt comes from Starship (initialized below) — no OMz theme.
+ZSH_THEME=""
+
+# Every plugin costs startup time; each one here earns its keep:
+#   git                    ~100 git aliases (gst, gco, gp, glog, ...)
+#   aliases                `als`: list every active alias grouped by source
+#   extract                `extract <archive>`: one command, every format
+#   zsh-autosuggestions    ghost-text history suggestions  (external → custom/)
+#   zsh-syntax-highlighting live command coloring; must load LAST (external → custom/)
+plugins=(git aliases extract zsh-autosuggestions zsh-syntax-highlighting)
+
+source $ZSH/oh-my-zsh.sh
+
+# --- Options ----------------------------------------------------------------
+# Offer to fix command typos ("zsh: correct 'gti' to 'git'?[nyae]").
+setopt CORRECT
+
+# --- PATH (portable additions only) -----------------------------------------
+export PATH="$HOME/.local/bin:$PATH"
+
+# --- Modern CLI replacements -------------------------------------------------
+# Only tools whose output is "for humans" take the classic names. Tools that
+# scripts and tutorials reference by name (grep, find) keep their originals —
+# use the modern ones by typing their real names (rg, fd).
+alias ls='eza -lh --group-directories-first --icons'
+alias ll='eza -lha --group-directories-first --icons'
+alias cat='bat --paging=never'
+
+# --- Autosuggestions partial accept -----------------------------------------
+# → (Right) accepts the whole ghost suggestion; Ctrl+→ accepts one word.
+bindkey '^[[1;5C' forward-word
+
+# --- Tool initialization (order matters: Starship owns the prompt) -----------
+eval "$(zoxide init zsh)"   # z <dir>: frecency jump; zi: interactive picker
+eval "$(fzf --zsh)"         # Ctrl+R: fuzzy history; Ctrl+T: file; Alt+C: dirs
+eval "$(starship init zsh)" # one prompt engine, every terminal
+
+# --- Machine-specific overrides (NOT in this repo) ---------------------------
+# Put conda/nvm/sdkman/JAVA_HOME/private PATHs in ~/.zshrc.local.
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

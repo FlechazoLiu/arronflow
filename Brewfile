@@ -19,14 +19,15 @@ brew "yazi"
 # Terminal font: Nerd Font with CJK glyphs (icons everywhere depend on it)
 cask "font-maple-mono-nf-cn"
 
-# --- Companion CLI tools (finalize during the shell setup step) ---
-# brew "starship"
-# brew "zoxide"
-# brew "fzf"
-# brew "eza"
-# brew "bat"
-# brew "ripgrep"
-# brew "fd"
+# --- Companion CLI tools (decided in the shell setup step) ---
+brew "starship"    # prompt engine (config/starship/starship.toml)
+brew "zoxide"      # frecency directory jumping (z / zi)
+brew "fzf"         # universal fuzzy finder (Ctrl+R / Ctrl+T / Alt+C)
+brew "eza"         # ls replacement (aliased as ls / ll)
+brew "bat"         # cat replacement (aliased as cat)
+brew "ripgrep"     # fast grep — used by its own name (rg)
+brew "fd"          # fast find — used by its own name (fd)
+brew "fastfetch"   # system info greeting (fast neofetch successor)
 
 # --- Optional yazi preview renderers ---
 # brew "ffmpeg"    # video previews

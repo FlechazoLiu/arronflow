@@ -60,7 +60,7 @@ Built tool-by-tool — each row lights up as the step-by-step setup progresses.
 | Neovim              | ⬜         | ⬜         |
 | lazygit             | ⬜         | ⬜         |
 | yazi                | ⬜         | ⬜         |
-| zsh + Oh My Zsh     | ⬜         | ⬜         |
+| zsh + Oh My Zsh     | ✅         | ✅         |
 
 ## License
 

@@ -1,0 +1,99 @@
+# ==========================================================================
+# Starship prompt — arronflow
+# ==========================================================================
+# Deployed to ~/.config/starship.toml by scripts/install.sh (symlink).
+# Changes apply on the NEXT prompt line — no reload needed.
+# Walkthrough: docs/shell.md
+#
+# Design: Tokyo Night *structure* (two-line, quiet frame, right-aligned
+# extras) wearing an Atom One Dark *palette*, so the prompt matches the
+# terminal theme decided in the Ghostty step.
+
+# Use the named palette below in every style string (fg:blue, fg:green, ...)
+palette = "one-dark"
+
+[palettes.one-dark]
+# Atom One Dark
+bg     = "#282c34"
+fg     = "#abb2bf"
+red    = "#e06c75"
+orange = "#d19a66"
+yellow = "#e5c07b"
+green  = "#98c379"
+cyan   = "#56b6c2"
+blue   = "#61afef"
+purple = "#c678dd"
+gray   = "#5c6370"
+
+# Line 1: directory + git + language runtimes, then time on the right.
+# Line 2: the input marker. The `fill` module stretches between them.
+format = """
+[╭─](fg:gray)$directory$git_branch$git_status$nodejs$python$c$cpp$cmake$java$fill$cmd_duration$time
+[╰─](fg:gray)$character"""
+
+[character]
+success_symbol = "[❯](bold fg:green)"
+error_symbol   = "[❯](bold fg:red)"
+
+[directory]
+style            = "bold fg:blue"
+format           = "[$path]($style)[$read_only](fg:red)"
+truncation_length = 4        # keep the prompt short in deep trees
+truncate_to_repo = true      # show paths relative to the repo root
+
+[git_branch]
+symbol = ""
+style  = "fg:purple"
+format = " [on](fg:gray) [$symbol$branch]($style)"
+
+[git_status]
+style  = "fg:yellow"
+format = "([$all_status$ahead_behind]($style))"
+
+# --- Language runtimes (shown only inside matching projects) -----------------
+[nodejs]
+symbol = ""
+style  = "fg:green"
+format = " [$symbol($version )]($style)"
+
+[python]
+symbol = ""
+style  = "fg:yellow"
+format = " [$symbol($version )]($style)"
+
+[c]
+symbol = ""
+style  = "fg:blue"
+format = " [$symbol($version )]($style)"
+
+[cpp]
+symbol = "⨁"
+style  = "fg:blue"
+format = " [$symbol($version )]($style)"
+
+[cmake]
+symbol = ""
+style  = "fg:orange"
+format = " [$symbol($version )]($style)"
+
+[java]
+symbol = ""
+style  = "fg:orange"
+format = " [$symbol($version )]($style)"
+
+# --- Right side --------------------------------------------------------------
+
+# Stretch blank space between left segments and right segments.
+[fill]
+symbol = " "
+
+# Show how long the previous command took, but only when it matters.
+[cmd_duration]
+min_time = 2000
+style    = "fg:yellow"
+format   = "[ ⏱ $duration]($style)"
+
+[time]
+disabled    = false
+format      = "[ $time](fg:gray)"
+time_format = "%H:%M"
