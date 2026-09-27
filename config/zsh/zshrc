@@ -27,8 +27,9 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 
 # Prompt: Powerlevel10k — the user's own wizard config, deployed to
-# ~/.p10k.zsh (symlink from config/zsh/p10k.zsh). The theme sources that
-# file automatically; re-run its wizard any time with `p10k configure`.
+# ~/.p10k.zsh (symlink from config/zsh/p10k.zsh). The config file itself is
+# sourced further down, after oh-my-zsh.sh. Re-run the wizard any time
+# with `p10k configure`.
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Every plugin costs startup time; each one here earns its keep:
@@ -40,6 +41,11 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 plugins=(git aliases extract zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
+
+# Load the Powerlevel10k config (~/.p10k.zsh symlinks to this repo). REQUIRED:
+# the OMz theme alone does not read this file — without this line every fresh
+# shell falls back to built-in defaults and auto-runs `p10k configure`.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # --- Options ----------------------------------------------------------------
 # Offer to fix command typos ("zsh: correct 'gti' to 'git'?[nyae]").

@@ -120,9 +120,13 @@ Ordered top to bottom:
    still loads. Placement rule inherited from the pre-arronflow zshrc: it must come
    *after* anything that prints (the greeting) and *before* Oh My Zsh — console output
    between this block and the prompt triggers p10k's initialization-output warning.
-3. **OMz** — `ZSH_THEME="powerlevel10k/powerlevel10k"`: the prompt, loaded as the OMz
-   theme (which sources `~/.p10k.zsh` by itself). Plus the plugin lineup. Each plugin's
-   job, in one line each:
+3. **OMz + the p10k config loader** — `ZSH_THEME="powerlevel10k/powerlevel10k"` loads
+   Powerlevel10k's *engine* as the OMz theme. The engine alone does **not** read
+   `~/.p10k.zsh`; the line right after `source $ZSH/oh-my-zsh.sh` does that explicitly:
+   `[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh`. That line is load-bearing — without
+   it, no `POWERLEVEL9K_*` parameter is ever set, and p10k auto-runs `p10k configure`
+   in every fresh shell (this failure happened once; see the FAQ). Plus the plugin
+   lineup. Each plugin's job, in one line each:
    - `git` — ~100 aliases: `gst` (status), `ga`/`gcmsg` (add/commit), `gco`/`gcb`
      (checkout/branch), `gp`/`gl` (push/pull), `gd` (diff), `glog` (pretty log). Quick
      git stays at the prompt; interactive git goes to lazygit.
@@ -217,6 +221,16 @@ left. `fastfetch --gen-config` regenerates the full default list for reference.
 
 - **The prompt shows boxes / missing icons.** The Nerd Font must be the terminal font —
   check Ghostty's `font-family` (see [ghostty.md](ghostty.md)).
+- **Every fresh shell opens the p10k configuration wizard** (diamond / font questions
+  instead of the prompt). Cause: `~/.p10k.zsh` is not being loaded. Setting
+  `ZSH_THEME="powerlevel10k/powerlevel10k"` only loads the theme *engine*; when p10k
+  starts and finds zero `POWERLEVEL9K_*` parameters, it concludes the prompt is
+  unconfigured and launches the wizard. Fix: the explicit loader line after
+  `source $ZSH/oh-my-zsh.sh` — `[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh` — must
+  be present (2026-09-27: it was mistaken for redundant and removed; every new tmux
+  window ran the wizard until it came back). Quick check:
+  `zsh -i -c 'print ${(k)#parameters[(I)POWERLEVEL9K_*]}'` — a healthy shell reports
+  ~314, a broken one reports 0.
 - **`command not found: fastfetch` etc. after a fresh clone.** Run `brew bundle install`
   and `scripts/bootstrap.sh` before the first shell start; the fastfetch line is guarded,
   the rest fail loudly on purpose.
