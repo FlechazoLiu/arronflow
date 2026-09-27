@@ -6,9 +6,9 @@
 (`config/tmux/tmux.conf` → `~/.config/tmux/tmux.conf`, symlinked by
 `scripts/install.sh`). Done so far: migration of the pre-repo config, base
 options, pane/window key bindings, the complete copy-and-paste layer
-(mouse selection, system clipboard, copy mode), and the Atom One Dark
-theme pass. Pending: `escape-time` tuning, the sessions/scripting lesson,
-and a final keybinding-optimization pass. Last updated 2026-09-27.
+(mouse selection, system clipboard, copy mode), the Atom One Dark
+theme pass, and `escape-time` pinning. Pending: the sessions/scripting
+lesson and a final keybinding-optimization pass. Last updated 2026-09-27.
 
 ## Role
 
@@ -123,6 +123,11 @@ Walkthrough of `config/tmux/tmux.conf`, grouped as the file is.
   close.
 - `set -g focus-events on` — panes report focus changes, so editors like
   Neovim can refresh on activation.
+- `set -s escape-time 10` — how long tmux waits after ESC before deciding
+  it is a lone ESC rather than the first byte of a key sequence (arrow
+  keys arrive as `ESC [ A`). tmux ≥ 3.5 already defaults to 10 ms; the
+  line pins it so older tmux (≤ 3.4, still common on servers) cannot
+  fall back to the 500 ms default that makes ESC in editors feel laggy.
 - `bell-action none` + `visual-activity/bell/silence off` — no audible or
   visual bells.
 
