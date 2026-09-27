@@ -7,8 +7,8 @@
 //
 // Curated for a laptop where the interesting facts are few. Deliberately
 // absent: separator (dashed line under the title), kernel, font, cursor,
-// localip, battery, poweradapter, wm — plus modules that print nothing on
-// macOS anyway (de, icons, terminalfont).
+// localip, battery, poweradapter, wm, wmtheme — plus modules that print
+// nothing on macOS anyway (de, icons, terminalfont).
 //
 // Re-add anything by naming it here; see the full default list with:
 //   fastfetch --gen-config
@@ -22,7 +22,6 @@
     "packages",
     "shell",
     "display",
-    "wmtheme",
     "theme",
     "terminal",
     "cpu",

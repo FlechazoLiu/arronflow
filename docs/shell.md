@@ -171,11 +171,11 @@ Do not hand-edit the file casually — it is machine-generated. Restyle with
 ### fastfetch ([config/fastfetch/config.jsonc](../config/fastfetch/config.jsonc))
 
 The greeting shown once per shell. Curated for a laptop where the interesting facts are
-few: `os · host · uptime · packages · shell · display · wmtheme · theme · terminal ·
+few: `os · host · uptime · packages · shell · display · theme · terminal ·
 cpu · gpu · memory · swap · disk · locale`, then the color palette. Deliberately
 absent: `separator` (the dashed line under the title), `kernel`, `font`, `cursor`,
-`localip`, `battery`, `poweradapter`, `wm`, and modules that print nothing on macOS
-anyway (`de`, `icons`, `terminalfont`).
+`localip`, `battery`, `poweradapter`, `wm`, `wmtheme`, and modules that print nothing
+on macOS anyway (`de`, `icons`, `terminalfont`).
 
 The `modules` array is the complete display list — what is not named does not print.
 Adjust by editing it; module names are the lowercase words fastfetch prints on the
