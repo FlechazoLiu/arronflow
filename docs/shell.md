@@ -139,26 +139,22 @@ Ordered top to bottom:
 
 ### Starship ([config/starship/starship.toml](../config/starship/starship.toml))
 
-Tokyo Night *structure* wearing an Atom One Dark *palette* — the prompt matches the
-terminal theme without importing a second color scheme. Two lines:
+The prompt is **Starship's stock default preset — deliberately**. This is exactly what
+this machine showed inside Ghostty before arronflow: the old zshrc initialized Starship
+with no config file, so the defaults applied. During the shell step a custom prompt was
+built (Tokyo Night structure wearing the Atom One Dark palette) and rolled back the same
+day — the stock look won on taste. The repo's `starship.toml` is therefore comment-only:
+Starship treats an empty config as "use the defaults", and keeping the file keeps the
+symlink/deployment story uniform.
 
-```
-╭─~/Work/Arron on  main (!2)  22.4          ⏱ 3s 12:34
-╰─❯
-```
+The default preset, briefly: one line ending in `❯` (green after success, red after
+failure), **directory** (truncated), **git branch + status**, and **language runtime
+versions** inside matching projects (`via node v22.4.0`); **command duration** appears
+after slow commands. Nothing else — no clock, no frame, no second line.
 
-- Line 1 left: **directory** (blue, truncated to repo-relative), **git branch** (purple) +
-  **status** (yellow), **language runtimes** (node/python/c/cpp/cmake/java — only inside
-  matching projects), and the **active conda environment** (cyan, base included),
-  mirroring the pre-arronflow prompt.
-- Line 1 right: **command duration** (only ≥ 2 s — silent otherwise) and **time**, pushed
-  right by the `fill` module.
-- Line 2: `❯` — green after success, red after failure. Input always starts at column 0,
-  so deep paths never crowd your typing.
-
-Colors are named in `[palettes.one-dark]` and referenced as `fg:blue`, `fg:green`, … —
-retinting the prompt is editing one table. Config changes apply on the *next prompt line*,
-no reload.
+To customize later: pick modules from [starship.rs/config](https://starship.rs/config/),
+or start from a ready-made preset with `starship preset <name> -o`. Config changes apply
+on the *next prompt line*, no reload.
 
 ## Key bindings & aliases worth memorizing
 

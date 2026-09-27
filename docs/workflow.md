@@ -67,9 +67,9 @@ Resolved tool-by-tool; each decision is made in its own setup step.
       `background-blur-radius = 30`: see the desktop without hurting readability.
 - [x] **Prompt: Starship, everywhere** (shell step, 2026-09-27) — one engine in every
       terminal replaces the old "Powerlevel10k outside Ghostty, Starship inside" split.
-      Tokyo Night *structure* (two-line, quiet frame, right-aligned time) wearing the
-      Atom One Dark *palette*; segments: directory, git branch/status, command duration
-      (≥ 2 s), time, language runtimes.
+      Look: **Starship's default preset** — a custom Tokyo-Night-style prompt wearing the
+      Atom One Dark palette was tried the same day and rolled back on taste; the repo's
+      `starship.toml` is intentionally empty (empty config = defaults).
 - [x] **Plugin lineup** (shell step) — OMz: `git`, `aliases`, `extract`, plus external
       `zsh-autosuggestions` and `zsh-syntax-highlighting`. Dropped: `z` (replaced by
       zoxide), `web-search` (Raycast covers it), Powerlevel10k theme. `neofetch` greeting
