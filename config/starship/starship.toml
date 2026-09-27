@@ -28,7 +28,7 @@ gray   = "#5c6370"
 # Line 1: directory + git + language runtimes, then time on the right.
 # Line 2: the input marker. The `fill` module stretches between them.
 format = """
-[╭─](fg:gray)$directory$git_branch$git_status$nodejs$python$c$cpp$cmake$java$fill$cmd_duration$time
+[╭─](fg:gray)$directory$git_branch$git_status$nodejs$python$conda$c$cpp$cmake$java$fill$cmd_duration$time
 [╰─](fg:gray)$character"""
 
 [character]
@@ -60,6 +60,13 @@ format = " [$symbol($version )]($style)"
 symbol = ""
 style  = "fg:yellow"
 format = " [$symbol($version )]($style)"
+
+# Active conda environment (base included) — mirrors the pre-arronflow prompt.
+[conda]
+symbol = ""
+style  = "fg:cyan"
+format = " [$symbol$environment]($style)"
+ignore_base = false
 
 [c]
 symbol = ""

@@ -74,9 +74,10 @@ Resolved tool-by-tool; each decision is made in its own setup step.
       `zsh-autosuggestions` and `zsh-syntax-highlighting`. Dropped: `z` (replaced by
       zoxide), `web-search` (Raycast covers it), Powerlevel10k theme. `neofetch` greeting
       replaced by `fastfetch`.
-- [x] **Dev environments stay out of the repo** (shell step) — conda/nvm/sdkman/JAVA/Qt
-      config moves to `~/.zshrc.local` when the workflow phase is done; the repo zshrc
-      loads that file if present.
+- [x] **Dev environments stay out of the repo** (shell step) — migrated to
+      `~/.zshrc.local` on 2026-09-27, losslessly from the pre-arronflow setup (nvm,
+      npm-global, conda, JDK/sdkman, Qt prefix, `top`/`fd` aliases). The repo zshrc loads
+      that file when present; nothing machine-specific is versioned.
 
 ## Pending decisions
 

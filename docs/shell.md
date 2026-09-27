@@ -130,9 +130,12 @@ Ordered top to bottom:
 6. **Tool inits** — `zoxide`, then `fzf --zsh`, then `starship init zsh`. Order is
    deliberate: prompt engines last.
 7. **Local hook** — `[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local`. The portability
-   seam: dev environments (conda, nvm, sdkman, JAVA_HOME, Qt) will live there when the
-   workflow phase is done — present on machines that need them, absent on machines that
-   don't, never in git.
+   seam: machine-specific setup lives there — present on machines that need it, absent on
+   machines that don't, never in git. This Mac's `~/.zshrc.local` (created 2026-09-27,
+   migrated losslessly from the pre-arronflow zshrc) carries nvm + npm-global PATH, conda,
+   JDK/sdkman, the Qt CMake prefix, and the personal `top`/`fd` aliases. It costs ~1 s of
+   startup; lazy-loading those tools is a known optimization, deliberately not applied
+   until it hurts.
 
 ### Starship ([config/starship/starship.toml](../config/starship/starship.toml))
 
@@ -146,7 +149,8 @@ terminal theme without importing a second color scheme. Two lines:
 
 - Line 1 left: **directory** (blue, truncated to repo-relative), **git branch** (purple) +
   **status** (yellow), **language runtimes** (node/python/c/cpp/cmake/java — only inside
-  matching projects).
+  matching projects), and the **active conda environment** (cyan, base included),
+  mirroring the pre-arronflow prompt.
 - Line 1 right: **command duration** (only ≥ 2 s — silent otherwise) and **time**, pushed
   right by the `fill` module.
 - Line 2: `❯` — green after success, red after failure. Input always starts at column 0,
