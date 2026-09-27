@@ -15,7 +15,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # ---------------------------------------------------------------------------
 SOURCES=(
   "config/zsh/zshrc"
-  "config/starship/starship.toml"
+  "config/zsh/p10k.zsh"
   "config/ghostty"
   "config/tmux"
   "config/nvim"
@@ -24,7 +24,7 @@ SOURCES=(
 )
 TARGETS=(
   "$HOME/.zshrc"
-  "$HOME/.config/starship.toml"
+  "$HOME/.p10k.zsh"
   "$HOME/.config/ghostty"
   "$HOME/.config/tmux"
   "$HOME/.config/nvim"

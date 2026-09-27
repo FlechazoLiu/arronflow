@@ -15,11 +15,21 @@
 # before `brew bundle` does not error on every shell start.
 command -v fastfetch >/dev/null 2>&1 && fastfetch
 
+# --- Powerlevel10k instant prompt -------------------------------------------
+# Shows the cached last prompt immediately while the rest of this file (and
+# ~/.zshrc.local) loads. Must come AFTER the greeting (which prints to the
+# console) and BEFORE Oh My Zsh — same order as the pre-arronflow zshrc.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # --- Oh My Zsh --------------------------------------------------------------
 export ZSH="$HOME/.oh-my-zsh"
 
-# Prompt comes from Starship (initialized below) — no OMz theme.
-ZSH_THEME=""
+# Prompt: Powerlevel10k — the user's own wizard config, deployed to
+# ~/.p10k.zsh (symlink from config/zsh/p10k.zsh). The theme sources that
+# file automatically; re-run its wizard any time with `p10k configure`.
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Every plugin costs startup time; each one here earns its keep:
 #   git                    ~100 git aliases (gst, gco, gp, glog, ...)
@@ -50,10 +60,9 @@ alias cat='bat --paging=never'
 # → (Right) accepts the whole ghost suggestion; Ctrl+→ accepts one word.
 bindkey '^[[1;5C' forward-word
 
-# --- Tool initialization (order matters: Starship owns the prompt) -----------
+# --- Tool initialization ------------------------------------------------------
 eval "$(zoxide init zsh)"   # z <dir>: frecency jump; zi: interactive picker
 eval "$(fzf --zsh)"         # Ctrl+R: fuzzy history; Ctrl+T: file; Alt+C: dirs
-eval "$(starship init zsh)" # one prompt engine, every terminal
 
 # --- Machine-specific overrides (NOT in this repo) ---------------------------
 # Put conda/nvm/sdkman/JAVA_HOME/private PATHs in ~/.zshrc.local.

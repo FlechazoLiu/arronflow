@@ -20,7 +20,6 @@ brew "yazi"
 cask "font-maple-mono-nf-cn"
 
 # --- Companion CLI tools (decided in the shell setup step) ---
-brew "starship"    # prompt engine (config/starship/starship.toml)
 brew "zoxide"      # frecency directory jumping (z / zi)
 brew "fzf"         # universal fuzzy finder (Ctrl+R / Ctrl+T / Alt+C)
 brew "eza"         # ls replacement (aliased as ls / ll)

@@ -65,11 +65,14 @@ Resolved tool-by-tool; each decision is made in its own setup step.
       follow this palette.
 - [x] **Transparency: subtle** (Ghostty step) — `background-opacity = 0.9` +
       `background-blur-radius = 30`: see the desktop without hurting readability.
-- [x] **Prompt: Starship, everywhere** (shell step, 2026-09-27) — one engine in every
-      terminal replaces the old "Powerlevel10k outside Ghostty, Starship inside" split.
-      Look: **Starship's default preset** — a custom Tokyo-Night-style prompt wearing the
-      Atom One Dark palette was tried the same day and rolled back on taste; the repo's
-      `starship.toml` is intentionally empty (empty config = defaults).
+- [x] **Prompt: Powerlevel10k, everywhere** (shell step, finalized 2026-09-27) — the
+      user's own wizard config (2026-05-20: classic, two lines, right frame, 24 h time,
+      transient + instant prompt), restored verbatim and versioned at
+      `config/zsh/p10k.zsh`. The pre-arronflow zshrc only loaded Starship outside tmux —
+      and its `TERM_PROGRAM == ghostty` test never matches inside tmux (tmux ≥ 3.4 sets
+      `TERM_PROGRAM=tmux` there), so p10k was the de-facto prompt all along. Starship's
+      stock default and a custom Tokyo-Night-style design were both tried and rolled
+      back the same day.
 - [x] **Plugin lineup** (shell step) — OMz: `git`, `aliases`, `extract`, plus external
       `zsh-autosuggestions` and `zsh-syntax-highlighting`. Dropped: `z` (replaced by
       zoxide), `web-search` (Raycast covers it), Powerlevel10k theme. `neofetch` greeting

@@ -1,8 +1,8 @@
-# Shell — zsh + Oh My Zsh + Starship
+# Shell — zsh + Oh My Zsh + Powerlevel10k
 
 > **Status:** ✅ configured (2026-09-27). Canonical configs:
 > [`config/zsh/zshrc`](../config/zsh/zshrc) → `~/.zshrc`,
-> [`config/starship/starship.toml`](../config/starship/starship.toml) → `~/.config/starship.toml`.
+> [`config/zsh/p10k.zsh`](../config/zsh/p10k.zsh) → `~/.p10k.zsh`.
 
 ## Role
 
@@ -67,14 +67,19 @@ anything external gets cloned there (`scripts/bootstrap.sh` does this).
 
 **Prompt engines — "the last initializer wins".** The prompt is a zsh hook: before each
 prompt is drawn, zsh calls whatever function currently claims it. Powerlevel10k and
-Starship both work by overwriting that function. Whoever initializes *last* renders. This
-stack keeps exactly one engine — Starship, initialized unconditionally — so the prompt is
-identical in Ghostty, tmux, Terminal.app, and IDE terminals.
+Starship both work by overwriting that function. Whoever initializes *last* renders. The
+pre-arronflow zshrc accidentally ran *both*: it loaded Starship only when
+`TERM_PROGRAM == ghostty` — a test that is never true inside tmux, because tmux ≥ 3.4
+sets `TERM_PROGRAM=tmux` in its panes. Since daily work happens in tmux, Powerlevel10k
+was the de-facto prompt all along. This stack keeps exactly one engine on purpose — p10k
+as the OMz theme — so the prompt is identical in Ghostty, tmux, Terminal.app, and IDE
+terminals.
 
-**Why Starship over Powerlevel10k:** a single Rust binary (not a zsh theme), works in any
-shell, configured by a short readable TOML that belongs in git, actively developed. p10k's
-one real advantage — its `p10k configure` wizard — matters less when the config is written
-deliberately and versioned.
+**Why Powerlevel10k:** it is the prompt this machine already ran for months — configured
+personally with p10k's wizard on 2026-05-20 — and the wizard makes restyling a two-minute
+affair. Starship, the honest alternative (a standalone Rust binary, TOML config, works in
+any shell), was briefly deployed here — as its stock default and as a custom
+Tokyo-Night-style design — and both were rolled back in favor of the familiar look.
 
 **Modern CLI replacements.** Classics rebuilt in Rust/Go — faster, colorful, humane
 defaults. Wired in through aliases, but with a policy: only "output for humans" tools take
@@ -96,8 +101,8 @@ responsibility; no scattering.
 ## Installation
 
 ```sh
-brew bundle install   # starship, zoxide, fzf, eza, bat, ripgrep, fd, fastfetch
-scripts/bootstrap.sh  # on a fresh Mac: also OMz + external plugins, then install.sh
+brew bundle install   # zoxide, fzf, eza, bat, ripgrep, fd, fastfetch
+scripts/bootstrap.sh  # fresh Mac: OMz + external plugins + p10k theme, then install.sh
 ```
 
 ## Our configuration
@@ -109,8 +114,14 @@ Ordered top to bottom:
 1. **Greeting** — `fastfetch`, guarded by `command -v` so a fresh clone before `brew
    bundle` doesn't error. The old `neofetch` cost 200–300 ms per shell; fastfetch is the
    Rust successor at milliseconds.
-2. **OMz** — `ZSH_THEME=""` (Starship owns the prompt; an OMz theme would be overridden
-   anyway), and the plugin lineup. Each plugin's job, in one line each:
+2. **p10k instant prompt** — sources the cached last prompt so the prompt is on screen
+   instantly while the rest of this file (and `~/.zshrc.local`, ~1 s of dev environment)
+   still loads. Placement rule inherited from the pre-arronflow zshrc: it must come
+   *after* anything that prints (the greeting) and *before* Oh My Zsh — console output
+   between this block and the prompt triggers p10k's initialization-output warning.
+3. **OMz** — `ZSH_THEME="powerlevel10k/powerlevel10k"`: the prompt, loaded as the OMz
+   theme (which sources `~/.p10k.zsh` by itself). Plus the plugin lineup. Each plugin's
+   job, in one line each:
    - `git` — ~100 aliases: `gst` (status), `ga`/`gcmsg` (add/commit), `gco`/`gcb`
      (checkout/branch), `gp`/`gl` (push/pull), `gd` (diff), `glog` (pretty log). Quick
      git stays at the prompt; interactive git goes to lazygit.
@@ -122,14 +133,14 @@ Ordered top to bottom:
      the whole line, `Ctrl+→` (bound explicitly below the aliases) accepts one word.
    - `zsh-syntax-highlighting` (external) — valid commands green, invalid red, live. Must
      load last among plugins, which is why it ends the array.
-3. **Options** — `setopt CORRECT`: zsh offers to fix command typos
+4. **Options** — `setopt CORRECT`: zsh offers to fix command typos
    (`correct 'gti' to 'git'?`).
-4. **PATH** — only the portable `$HOME/.local/bin` prefix. Machine-specific PATHs belong
+5. **PATH** — only the portable `$HOME/.local/bin` prefix. Machine-specific PATHs belong
    in `~/.zshrc.local`.
-5. **Modern aliases** — the table above, per policy.
-6. **Tool inits** — `zoxide`, then `fzf --zsh`, then `starship init zsh`. Order is
-   deliberate: prompt engines last.
-7. **Local hook** — `[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local`. The portability
+6. **Modern aliases** — the table above, per policy.
+7. **Tool inits** — `zoxide`, then `fzf --zsh`. No prompt engine here: the prompt is the
+   OMz theme from step 3.
+8. **Local hook** — `[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local`. The portability
    seam: machine-specific setup lives there — present on machines that need it, absent on
    machines that don't, never in git. This Mac's `~/.zshrc.local` (created 2026-09-27,
    migrated losslessly from the pre-arronflow zshrc) carries nvm + npm-global PATH, conda,
@@ -137,24 +148,25 @@ Ordered top to bottom:
    startup; lazy-loading those tools is a known optimization, deliberately not applied
    until it hurts.
 
-### Starship ([config/starship/starship.toml](../config/starship/starship.toml))
+### Powerlevel10k ([config/zsh/p10k.zsh](../config/zsh/p10k.zsh))
 
-The prompt is **Starship's stock default preset — deliberately**. This is exactly what
-this machine showed inside Ghostty before arronflow: the old zshrc initialized Starship
-with no config file, so the defaults applied. During the shell step a custom prompt was
-built (Tokyo Night structure wearing the Atom One Dark palette) and rolled back the same
-day — the stock look won on taste. The repo's `starship.toml` is therefore comment-only:
-Starship treats an empty config as "use the defaults", and keeping the file keeps the
-symlink/deployment story uniform.
+The prompt is the one configured personally with p10k's wizard on 2026-05-20 and used
+daily since — restored verbatim (1745 wizard-generated lines, zero machine-specific
+paths) and now versioned in this repo. The wizard's choices, i.e. what you see:
 
-The default preset, briefly: one line ending in `❯` (green after success, red after
-failure), **directory** (truncated), **git branch + status**, and **language runtime
-versions** inside matching projects (`via node v22.4.0`); **command duration** appears
-after slow commands. Nothing else — no clock, no frame, no second line.
+- **classic style, two lines, right frame, flat heads/tails** — line 1 carries `dir` and
+  `vcs` (git state) on the left; the right side carries signals that appear only when
+  relevant: exit code of a failed command, command duration, background jobs, and
+  environment segments (`anaconda` for conda, `nvm` for Node, …). Line 2 is the `❯`
+  prompt character.
+- **compact, concise spacing** — information-dense without visual noise.
+- **transient prompt** — once a command finishes, its prompt collapses to a plain
+  one-line copy, keeping scrollback readable.
+- **instant prompt** — the cached prompt paints immediately while zsh initializes.
 
-To customize later: pick modules from [starship.rs/config](https://starship.rs/config/),
-or start from a ready-made preset with `starship preset <name> -o`. Config changes apply
-on the *next prompt line*, no reload.
+Do not hand-edit the file casually — it is machine-generated. Restyle with
+`p10k configure`, which rewrites `~/.p10k.zsh`; since that is a symlink into this repo,
+`git diff` shows exactly what the wizard changed — commit what you keep.
 
 ## Key bindings & aliases worth memorizing
 
@@ -173,16 +185,15 @@ on the *next prompt line*, no reload.
 ## Tuning & exploring
 
 - **Measure startup**: `time zsh -ic exit`. Adding a plugin? Measure before and after.
-- **Try prompt styles live** without touching config:
-  ```sh
-  STARSHIP_CONFIG=~/.cache/starship-try.toml eval "$(starship init zsh)"
-  starship preset pastel-powerline -o ~/.cache/starship-try.toml   # swap styles freely
-  exec zsh                                                          # back to normal
-  ```
-- **Explain your prompt**: `starship explain` names every visible segment.
-- **Preview official presets**: https://starship.rs/presets
-- **Add a segment**: pick a module from the config reference, add `$module` to `format`,
-  configure its section — the change lands on the next prompt line.
+  (The prompt paints instantly regardless of startup time — that is what instant prompt
+  is for.)
+- **Restyle the prompt**: `p10k configure` — the interactive wizard walks through style,
+  characters, colors, one vs. two lines, spacing, and transient/instant prompt, then
+  shows a "show off" demo. It rewrites `~/.p10k.zsh` (a symlink into this repo); review
+  with `git diff`, commit what you keep.
+- **Toggle single segments** (drop `anaconda`, add `java_version`, …): edit
+  `POWERLEVEL9K_LEFT/RIGHT_PROMPT_ELEMENTS` near the top of `config/zsh/p10k.zsh` —
+  every available segment is listed there, mostly commented out; `exec zsh` applies.
 - **OMz CLI**: `omz update`, `omz plugin enable/disable <name>`, `omz theme set <name>`
   (they edit `~/.zshrc` — i.e. this repo's file; prefer hand-editing so docs stay in
   sync).
@@ -196,10 +207,10 @@ on the *next prompt line*, no reload.
 - **`command not found: fastfetch` etc. after a fresh clone.** Run `brew bundle install`
   and `scripts/bootstrap.sh` before the first shell start; the fastfetch line is guarded,
   the rest fail loudly on purpose.
-- **Where did my old `~/.zshrc` go?** `scripts/install.sh` moved it to
-  `~/.zshrc.bak.<timestamp>` before symlinking. The old Powerlevel10k files
-  (`~/.p10k.zsh`, `~/.oh-my-zsh/custom/themes/powerlevel10k`) are simply no longer
-  referenced; delete them whenever.
+- **Where did my old `~/.zshrc` and `~/.p10k.zsh` go?** `scripts/install.sh` moved each
+  to `<name>.bak.<timestamp>` before symlinking; the live `~/.p10k.zsh` is a symlink to
+  `config/zsh/p10k.zsh` with identical content. Old backups are safe to delete once you
+  are satisfied.
 - **Why doesn't `grep` mean `rg` anymore?** Copied shell snippets assume real `grep`
   semantics; aliases that silently change them cause confusing failures. Type `rg`.
 - **A command behaves oddly.** First suspect: an alias. Check with `alias <name>` or
@@ -209,9 +220,7 @@ on the *next prompt line*, no reload.
 
 | When you need…                                 | Where                                                          |
 | ---------------------------------------------- | -------------------------------------------------------------- |
-| Starship — everything                          | [starship.rs](https://starship.rs)                             |
-| Starship module & option reference             | [starship.rs/config](https://starship.rs/config/)              |
-| Preset gallery with screenshots                | [starship.rs/presets](https://starship.rs/presets)             |
+| Powerlevel10k — README: wizard, options, FAQ   | [romkatv/powerlevel10k](https://github.com/romkatv/powerlevel10k) |
 | Oh My Zsh — docs, plugins, themes              | [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)          |
 | OMz plugin catalog                             | [OMz wiki — Plugins](https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins) |
 | zsh-autosuggestions (keys, strategies)         | [zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |

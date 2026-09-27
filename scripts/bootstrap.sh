@@ -34,6 +34,8 @@ clone_if_missing() {
 
 clone_if_missing https://github.com/zsh-users/zsh-autosuggestions     "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
 clone_if_missing https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+# Prompt theme: Powerlevel10k (wizard config deployed to ~/.p10k.zsh).
+clone_if_missing https://github.com/romkatv/powerlevel10k             "$ZSH_CUSTOM/themes/powerlevel10k"
 
 echo "==> 3/3 Deploy configs"
 "$REPO_ROOT/scripts/install.sh"
