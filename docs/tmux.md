@@ -8,8 +8,11 @@
 options, pane/window key bindings, the complete copy-and-paste layer
 (mouse selection, system clipboard, copy mode), the Atom One Dark
 theme pass, `escape-time` pinning, and the session-workflow helper
-(`scripts/session.sh`). Pending: a final keybinding-optimization pass.
-Last updated 2026-09-27.
+(`scripts/session.sh`), and two keybinding reference pages:
+[tmux-keys-default.md](tmux-keys-default.md) — the stock tmux keymap
+(e.g. on servers) — and [tmux-keys-ours.md](tmux-keys-ours.md) — this
+machine's live keymap. Pending: a final keybinding-optimization pass.
+Last updated 2026-09-28.
 
 ## Role
 
@@ -208,7 +211,7 @@ adding one later is a one-line change to a format string.
 | New window (in cwd)                 | `prefix t`              |
 | Reload config                       | `prefix r`              |
 | Enter copy mode                     | `prefix [`              |
-| Copy mode: move                     | `h j k l`, `w`/`b`, `g g`/`G` |
+| Copy mode: move                     | `h j k l`, `w`/`b`, `g`/`G` |
 | Copy mode: start selection          | `v` (or `Space`)        |
 | Copy mode: rectangular selection    | `C-v` then move         |
 | Copy mode: copy + exit              | `y` (or `Enter`)        |
@@ -218,9 +221,19 @@ adding one later is a one-line change to a format string.
 | Mouse: select word / line           | double-click / triple-click |
 | Native Ghostty selection (across panes, status line) | `Shift` + drag |
 
-Defaults worth knowing already (lesson pending): `prefix d` detach,
-`prefix s` session list, `prefix w` window tree, `prefix z` zoom pane,
-`prefix x` kill pane, `prefix ,` rename window.
+Defaults worth knowing (full tables on the companion pages below):
+`prefix d` detach, `prefix s` session list, `prefix w` window tree,
+`prefix z` zoom pane, `prefix x` kill pane, `prefix ,` rename window.
+
+Two companion pages record the keymaps in full:
+
+- [tmux-keys-default.md](tmux-keys-default.md) — the stock tmux keymap,
+  prefix `C-b`: what you get on any vanilla server. Also home to the
+  stock mouse table (right-click menus, middle-click paste) and the
+  emacs copy-mode keys.
+- [tmux-keys-ours.md](tmux-keys-ours.md) — this machine's live keymap:
+  every remap with its reason, the full cheat sheet, and the defaults
+  our remaps shadow.
 
 ## Tuning & exploring
 
