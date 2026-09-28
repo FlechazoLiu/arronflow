@@ -11,7 +11,10 @@ theme pass, `escape-time` pinning, and the session-workflow helper
 (`scripts/session.sh`), and two keybinding reference pages:
 [tmux-keys-default.md](tmux-keys-default.md) — the stock tmux keymap
 (e.g. on servers) — and [tmux-keys-ours.md](tmux-keys-ours.md) — this
-machine's live keymap. Pending: a final keybinding-optimization pass.
+machine's live keymap. Deferred: a final keybinding-optimization pass
+(user decision, 2026-09-28) — resume after living with the current map
+for a while; the audit base is
+[tmux-keys-ours.md](tmux-keys-ours.md).
 Last updated 2026-09-28.
 
 ## Role
