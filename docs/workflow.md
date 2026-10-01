@@ -10,7 +10,7 @@ How the six tools compose into one environment.
 │ ┌───────────────────────────────────────────────────────┐ │
 │ │ tmux — persistent sessions, windows, panes            │ │
 │ │ ┌───────────────┐ ┌─────────────────────────────────┐ │ │
-│ │ │ zsh + Oh My   │ │ Neovim · lazygit · yazi         │ │ │
+│ │ │ zsh + Oh My   │ │ LazyVim · lazygit · yazi        │ │ │
 │ │ │ Zsh (shell)   │ │ (TUI apps running in panes)     │ │ │
 │ │ └───────────────┘ └─────────────────────────────────┘ │ │
 │ └───────────────────────────────────────────────────────┘ │
@@ -22,7 +22,7 @@ How the six tools compose into one environment.
 | Terminal    | Ghostty     | Rendering, typography, theme, native tabs/splits, quick dropdown terminal |
 | Multiplexer | tmux        | Sessions that outlive the terminal; windows and panes; ssh survivability  |
 | Shell       | zsh + OMz   | Prompt, completion, history, aliases — the glue between everything        |
-| Editor      | Neovim      | Editing, LSP, git gutter; lives in a tmux pane next to runners/watchers   |
+| Editor | LazyVim (Neovim) | Editing, LSP, git gutter; lives in a tmux pane next to runners/watchers |
 | Git         | lazygit     | Staging hunks, committing, branching, rebasing — keyboard only            |
 | Files       | yazi        | Fast navigation, previews, bulk operations; hands off to shell/editor     |
 
@@ -33,7 +33,7 @@ How the six tools compose into one environment.
    drops, so context is never lost.
 3. **Navigate with yazi** — find the project, quit into a shell already `cd`'d there (via the
    shell wrapper function).
-4. **Edit with Neovim** — one pane for the editor, neighboring panes for runner/build/watch.
+4. **Edit with LazyVim** — one pane for the editor, neighboring panes for runner/build/watch.
 5. **Commit with lazygit** — hunk-level staging without touching the mouse.
 6. **Jump around** — zoxide for directories, fzf for files and history.
 
@@ -61,8 +61,10 @@ The whole environment is this repo:
 Resolved tool-by-tool; each decision is made in its own setup step.
 
 - [x] **Theme family: Atom One Dark** (Ghostty step, 2026-09-26) — dark background, gentle
-      contrast, easy on the eyes for long sessions. tmux, Neovim, yazi, and lazygit all
-      follow this palette.
+      contrast, easy on the eyes for long sessions. tmux, yazi, and lazygit all follow this
+      palette. *Editor exception:* LazyVim currently runs its default tokyonight; an Atom
+      One Dark colorscheme pass is pending (one spec-file change — see
+      [lazyvim.md](lazyvim.md)).
 - [x] **Transparency: subtle** (Ghostty step) — `background-opacity = 0.9` +
       `background-blur-radius = 30`: see the desktop without hurting readability.
 - [x] **Prompt: Powerlevel10k, everywhere** (shell step, finalized 2026-09-27) — the
@@ -79,11 +81,17 @@ Resolved tool-by-tool; each decision is made in its own setup step.
       replaced by `fastfetch`.
 - [x] **Dev environments stay out of the repo** (shell step) — migrated to
       `~/.zshrc.local` on 2026-09-27, losslessly from the pre-arronflow setup (nvm,
-      npm-global, conda, JDK/sdkman, Qt prefix, `top`/`fd` aliases). The repo zshrc loads
+      npm-global, conda, JDK+sdkman, Qt prefix, `top`/`fd` aliases). The repo zshrc loads
       that file when present; nothing machine-specific is versioned.
+- [x] **Editor distribution: LazyVim** (editor step, 2026-10-01) — stock starter under
+      `config/nvim/`, zero extras, plugin set pinned by a committed `lazy-lock.json`.
+      Hand-rolled lazy.nvim rejected: it front-loads picker/completion/statusline/LSP-UI
+      decisions better made later as spec overrides. Curriculum: Vim → Neovim concepts →
+      LazyVim ([lazyvim.md](lazyvim.md)).
 
 ## Pending decisions
 
-- [ ] tmux prefix key and pane-navigation style (decide in the tmux step)
-- [ ] Neovim distribution: hand-rolled lazy.nvim vs distro (decide in the Neovim step)
+- [ ] tmux keybinding-optimization pass — deferred 2026-09-28; resume against the audit
+      base in [tmux-keys-ours.md](tmux-keys-ours.md)
+- [ ] LazyVim colorscheme: keep default tokyonight vs Atom One Dark pass
 - [ ] `macos-option-as-alt` in Ghostty — decide together with tmux keybindings

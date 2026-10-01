@@ -1,8 +1,8 @@
 # arronflow
 
-My macOS terminal workflow: **Ghostty + tmux + Neovim + lazygit + yazi + zsh (Oh My Zsh)** —
-documented, versioned, and scripted, so the whole environment can be rebuilt on a fresh Mac
-in minutes.
+My macOS terminal workflow: **Ghostty + tmux + LazyVim (Neovim) + lazygit + yazi + zsh (Oh My
+Zsh)** — documented, versioned, and scripted, so the whole environment can be rebuilt on a fresh
+Mac in minutes.
 
 The name: **Arron** + **workflow** = `arronflow`.
 
@@ -12,7 +12,7 @@ The name: **Arron** + **workflow** = `arronflow`.
 | ----------------------------------------------------------- | ------------------- | ----------------------------------------------------- | ---------------------------------------------- |
 | [Ghostty](https://ghostty.org)                              | Terminal emulator   | `config/ghostty/` → `~/.config/ghostty/`              | [docs/ghostty.md](docs/ghostty.md)             |
 | [tmux](https://github.com/tmux/tmux)                        | Terminal multiplexer | `config/tmux/` → `~/.config/tmux/`                   | [docs/tmux.md](docs/tmux.md)                   |
-| [Neovim](https://neovim.io)                                 | Editor              | `config/nvim/` → `~/.config/nvim/`                    | [docs/neovim.md](docs/neovim.md)               |
+| [Neovim](https://neovim.io) + [LazyVim](https://lazyvim.github.io) | Editor (LazyVim distro) | `config/nvim/` → `~/.config/nvim/` | [docs/lazyvim.md](docs/lazyvim.md) |
 | [lazygit](https://github.com/jesseduffield/lazygit)         | Git TUI             | `config/lazygit/` → `~/Library/Application Support/lazygit/` | [docs/lazygit.md](docs/lazygit.md)       |
 | [yazi](https://github.com/sxyazi/yazi)                      | File manager TUI    | `config/yazi/` → `~/.config/yazi/`                    | [docs/yazi.md](docs/yazi.md)                   |
 | [zsh](https://www.zsh.org) + [Oh My Zsh](https://ohmyz.sh)  | Shell               | `config/zsh/zshrc` → `~/.zshrc`                       | [docs/shell.md](docs/shell.md)                 |
@@ -58,7 +58,8 @@ Built tool-by-tool — each row lights up as the step-by-step setup progresses.
 | Ghostty             | ✅         | ✅         |
 | tmux                | 🔄         | 🔄         |
 | [Vim foundations](docs/vim.md) (tutorial only) | — | ✅ |
-| Neovim              | ⬜         | ✅         |
+| [Neovim concepts](docs/neovim.md) (tutorial only) | — | ✅ |
+| [LazyVim](docs/lazyvim.md) (daily editor) | ✅ | ✅ |
 | lazygit             | ⬜         | ⬜         |
 | yazi                | ⬜         | ⬜         |
 | zsh + Oh My Zsh     | ✅         | ✅         |

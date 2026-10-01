@@ -2,12 +2,12 @@
 
 ## Status
 
-**Stage 2 of 3 — documented, configuration deferred to the LazyVim step.**
+**Stage 2 of 3 — conceptual tutorial; configuration lives one page on.**
 This page explains Neovim as a concept: what it inherits from Vim, what its
 core adds, and where external tools and distributions begin. It is the
-companion to the Stage 1 prerequisite [vim.md](vim.md). The repository
-manages no Neovim configuration yet; when the editor is actually configured,
-it will be configured as LazyVim, in the final stage.
+companion to the Stage 1 prerequisite [vim.md](vim.md). The repository's
+editor configuration now exists — as LazyVim, documented in
+[lazyvim.md](lazyvim.md).
 
 The curriculum so far:
 
@@ -161,17 +161,10 @@ nvim --clean /tmp/arronflow-nvim-practice.txt
 
 ## Our configuration
 
-There is **no Neovim configuration in this repository yet**, by design:
-
-- `config/nvim/` contains only its `README.md` placeholder;
-- `scripts/install.sh` skips placeholder-only directories, so nothing is
-  deployed to `~/.config/nvim/`;
-- no `init.lua`, no plugin manager or lockfile, no mappings, no LSP
-  servers, no Tree-sitter parsers.
-
-When configuration begins, it begins once, as the LazyVim setup, under
-`config/nvim/` — deployed by the same symlink mechanism as every other
-tool in this repo. This page changes then.
+This page stays concept-only by design. The actual configuration — the
+LazyVim distribution, its plugin set, and the lockfile that pins it — is
+[`config/nvim/`](../config/nvim/), walked through in
+[lazyvim.md](lazyvim.md).
 
 ## Key bindings
 

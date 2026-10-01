@@ -8,7 +8,7 @@ into its real location on the machine — this directory is the single source of
 | `zsh/`     | `~/.zshrc` (`zshrc` file)                   | May later hold sourced files (aliases, env)  |
 | `ghostty/` | `~/.config/ghostty/`                        |                                              |
 | `tmux/`    | `~/.config/tmux/` (tmux ≥ 3.1)              |                                              |
-| `nvim/`    | `~/.config/nvim/`                           | `lazy-lock.json` is tracked to pin plugins   |
+| `nvim/`    | `~/.config/nvim/`                           | LazyVim starter; `lazy-lock.json` pins plugins |
 | `yazi/`    | `~/.config/yazi/`                           |                                              |
 | `lazygit/` | `~/Library/Application Support/lazygit/`    | `state.yml` (runtime) is gitignored          |
 
