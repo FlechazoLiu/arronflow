@@ -81,16 +81,9 @@ Resolved tool-by-tool; each decision is made in its own setup step.
       `~/.zshrc.local` on 2026-09-27, losslessly from the pre-arronflow setup (nvm,
       npm-global, conda, JDK/sdkman, Qt prefix, `top`/`fd` aliases). The repo zshrc loads
       that file when present; nothing machine-specific is versioned.
-- [x] **tmux prefix and navigation** (tmux step, 2026-09-27) — the user's pre-repo habits
-      became canonical: prefix `C-a`; `\` / `-` splits that inherit the pane's directory;
-      `h j k l` pane traversal with repeatable `H J K L` resize; vi copy mode with
-      `v` / `C-v` / `y`. A final keybinding-optimization pass is deferred (see Pending).
 
 ## Pending decisions
 
-- [ ] tmux keybinding-optimization pass — deferred 2026-09-28, after the core
-      setup settled; resume against the audit base in
-      [tmux-keys-ours.md](tmux-keys-ours.md).
+- [ ] tmux prefix key and pane-navigation style (decide in the tmux step)
 - [ ] Neovim distribution: hand-rolled lazy.nvim vs distro (decide in the Neovim step)
-- [ ] `macos-option-as-alt` in Ghostty — decides together with the deferred tmux
-      keybinding pass
+- [ ] `macos-option-as-alt` in Ghostty — decide together with tmux keybindings
