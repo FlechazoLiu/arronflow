@@ -163,11 +163,14 @@ gh_install() { # gh_install <tool> — registry-driven release-binary install
 
 ghostty_hint() {
   cat >&2 <<'EOF'
-NOTE    Ghostty is not in this distro's standard repos.
-        - Ubuntu >= 26.04 ships it officially; older Ubuntu: community builds
-          at https://github.com/mkasberg/ghostty-ubuntu
+NOTE    Ghostty is not packaged for this platform.
+        - Arch x86_64 ships it in [extra]; Arch Linux ARM does not package it
+        - Ubuntu >= 26.04 ships it officially; older releases: community
+          builds at https://github.com/mkasberg/ghostty-ubuntu
         - Fedora: `dnf copr enable scottames/ghostty && dnf install ghostty`
-        Everything else in arronflow runs in any terminal — this is optional.
+        Ghostty is the terminal emulator itself — on a box you reach over SSH
+        it runs on your local machine anyway, and everything else in arronflow
+        works in any terminal. Treat it as optional here.
 EOF
 }
 
@@ -236,7 +239,10 @@ install_tool() { # install_tool <tool> via package manager / release fallback
       ;;
     pacman)
       if [[ -n $pacman ]]; then
-        run_root pacman -S --needed --noconfirm $pacman
+        # Same optional-component guard as apt/dnf below: Arch Linux ARM
+        # carries no ghostty and pacman dies with "target not found" —
+        # that must warn, not abort the phase before the remaining tools.
+        run_root pacman -S --needed --noconfirm $pacman || ghostty_hint_when "$tool"
       else
         gh_install "$tool"
       fi
@@ -261,8 +267,12 @@ install_tool() { # install_tool <tool> via package manager / release fallback
     dnf)
       if [[ -n $dnf ]]; then
         run_root dnf install -y $dnf || ghostty_hint_when "$tool"
-      else
+      elif [[ -n $gh ]]; then
         gh_install "$tool"
+      else
+        # No native package and no release binary (Ghostty on Fedora): the
+        # hint names the community route instead of dying on an empty repo.
+        ghostty_hint_when "$tool"
       fi
       ;;
   esac

@@ -50,6 +50,19 @@ fi
 
 PKG=$(detect_pkgmgr) || PKG=unknown
 
+# The one optional component. Ghostty is a terminal emulator and some Linux
+# platforms simply do not package it (Arch Linux ARM, Ubuntu < 26.04); there,
+# advising an install that cannot succeed would be dishonest. A missing
+# binary on such a platform reports as a warning, not an issue count.
+ghostty_optional_here() { # ghostty_optional_here <tool>
+  [[ $1 == ghostty && $(uname -s) == Linux ]] || return 1
+  case "$PKG" in
+    pacman) pkg_available pacman "$(reg_field ghostty pacman)" && return 1 ;;
+    apt) pkg_available apt "$(reg_field ghostty apt)" && return 1 ;;
+  esac
+  return 0
+}
+
 # --- Report ----------------------------------------------------------------------
 
 ISSUES=0
@@ -58,7 +71,11 @@ MISSING_TOOLS=""
 note_for() { # note_for <tool> <state> <cstate> — the actionable hint (prints)
   local tool="$1" st="$2" cstate="$3"
   if [[ $st == missing ]]; then
-    printf 'install: arron tools --auto %s' "$tool"
+    if ghostty_optional_here "$tool"; then
+      printf 'optional — not packaged on this platform'
+    else
+      printf 'install: arron tools --auto %s' "$tool"
+    fi
   elif [[ $st == old ]]; then
     printf 'upgrade to >= %s' "$(reg_field "$tool" min)"
   elif [[ $cstate == foreign ]]; then
@@ -97,8 +114,12 @@ for t in "${WANT[@]}"; do
   marker="✓"
   color=32
   if [[ $st != ok || $cstate == foreign || $cstate == unlinked ]]; then
-    ISSUES=$((ISSUES + 1))
-    marker="✗"; color=31
+    if [[ $st == missing ]] && ghostty_optional_here "$t"; then
+      marker="⚠"; color=33   # no action exists on this platform; not counted
+    else
+      ISSUES=$((ISSUES + 1))
+      marker="✗"; color=31
+    fi
   elif [[ $cstate == placeholder ]]; then
     marker="⚠"; color=33
   fi

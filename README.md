@@ -44,8 +44,9 @@ Platform notes — macOS: Homebrew; `--all` is one Brewfile transaction. Linux (
 Debian-Ubuntu / Fedora, x86_64 & aarch64): distro packages where current, official GitHub
 release binaries into `~/.local/bin` where not (Ubuntu's repos lack lazygit/yazi/eza and
 ship a Neovim older than LazyVim's ≥ 0.11). The Maple Mono NF CN font installs from its
-release; Ghostty is native on Arch and Ubuntu ≥ 26.04, community-built elsewhere —
-optional, the rest of the stack runs in any terminal.
+release; Ghostty is native on Arch (x86_64) and Ubuntu ≥ 26.04, community-built
+elsewhere and unpackaged on Arch Linux ARM — optional, the rest of the stack runs in
+any terminal, and `arron doctor` says so instead of advising an impossible install.
 
 ## Design decisions
 

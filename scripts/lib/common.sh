@@ -215,6 +215,22 @@ detect_pkgmgr() { # → brew | pacman | apt | dnf on stdout; exit 1 (printing
   return 1
 }
 
+# Does this package manager currently OFFER the package? Local-cache queries
+# only (pacman's sync dbs, apt's lists) — read-only and network-free, so
+# doctor can call them freely. Managers without a cheap local query (brew,
+# dnf) assume yes; their registry entries are curated per platform anyway.
+pkg_available() { # pkg_available <pkgmgr> <pkgname>
+  local cand
+  case "$1" in
+    pacman) have pacman && pacman -Si "$2" >/dev/null 2>&1 ;;
+    apt)
+      cand=$(apt-cache policy "$2" 2>/dev/null | sed -n 's/^  Candidate: //p')
+      [[ -n $cand && $cand != "(none)" ]]
+      ;;
+    *) return 0 ;;
+  esac
+}
+
 # Prints the install commands for ONE tool on the CURRENT platform, plus a
 # stable GitHub link when this platform has no native package for it.
 # Never calls the GitHub API and never installs anything — safe on a box
@@ -248,12 +264,22 @@ print_manual_block() { # print_manual_block <tool> [pkgmgr]
       fi
       ;;
     pacman)
-      [[ -n $pacman ]] && printf '    sudo pacman -S --needed %s\n' "$pacman"
+      if [[ -n $pacman ]]; then
+        if pkg_available pacman "$pacman"; then
+          printf '    sudo pacman -S --needed %s\n' "$pacman"
+        else
+          printf '    # %s is not in this repo set (e.g. Ghostty on Arch Linux ARM) — optional\n' "$pacman"
+        fi
+      fi
       ;;
     apt)
       for spec in ${apt//,/ }; do
         pkgname="${spec%%:*}"
-        printf '    sudo apt update && sudo apt install -y %s\n' "$pkgname"
+        if pkg_available apt "$pkgname"; then
+          printf '    sudo apt update && sudo apt install -y %s\n' "$pkgname"
+        else
+          printf '    # no %s package on this release (e.g. Ghostty on Ubuntu < 26.04) — optional\n' "$pkgname"
+        fi
         if [[ $spec == *:* ]]; then
           realbin="${spec#*:}"
           printf '    # Debian names the binary %s — arronflow links it as %s in ~/.local/bin\n' \
