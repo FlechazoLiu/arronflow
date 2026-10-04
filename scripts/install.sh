@@ -1,91 +1,179 @@
 #!/usr/bin/env bash
 #
-# Deploys arronflow configs by symlinking them from this repo into place.
-# Idempotent: safe to re-run at any time. Existing files at a target location
-# are preserved as <target>.bak.<timestamp>, never silently overwritten.
+# Phase 2 — config deployment: symlinks this repo's configs into place.
+#
+#   install.sh [tool...]   deploy the selected tools' configs
+#                          (no args: menu on a terminal, everything when piped)
+#   install.sh --list      tool | binary gate | config state
+#   install.sh --dry-run   print LINK/SKIP/BACKUP decisions, change nothing
+#
+# Gating: a tool's config deploys only when the tool's BINARY is installed —
+# no tmux, no tmux config. Tools are independent (skipping Ghostty never
+# blocks tmux). Install binaries first: scripts/tools.sh (--manual prints
+# the commands for your platform). What gets linked lives in
+# lib/registry.sh — one record per tool.
+#
+# Idempotent: re-running is always safe; existing files at a target are
+# preserved as <target>.bak.<timestamp>, never silently overwritten.
+# Exit code: 0 = every requested config deployed (or already linked);
+# 1 = at least one was gated off because its tool is not installed.
 
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPTS="$REPO_ROOT/scripts"
+source "$SCRIPTS/lib/common.sh"
+source "$SCRIPTS/lib/registry.sh"
+prepend_paths
 
-# lazygit reads its config from a platform-specific directory:
-# macOS → ~/Library/Application Support/lazygit, Linux → ~/.config/lazygit.
-if [[ "$(uname -s)" == "Darwin" ]]; then
-  LAZYGIT_DIR="$HOME/Library/Application Support/lazygit"
-else
-  LAZYGIT_DIR="$HOME/.config/lazygit"
-fi
-
-# ---------------------------------------------------------------------------
-# Link manifest: repo-relative source -> absolute target.
-# A source that does not exist yet (tool not configured so far) is skipped,
-# so the script works at every stage of the step-by-step setup.
-# ---------------------------------------------------------------------------
-SOURCES=(
-  "config/zsh/zshrc"
-  "config/zsh/p10k.zsh"
-  "config/fastfetch"
-  "config/ghostty"
-  "config/tmux"
-  "config/nvim"
-  "config/yazi"
-  "config/lazygit"
-)
-TARGETS=(
-  "$HOME/.zshrc"
-  "$HOME/.p10k.zsh"
-  "$HOME/.config/fastfetch"
-  "$HOME/.config/ghostty"
-  "$HOME/.config/tmux"
-  "$HOME/.config/nvim"
-  "$HOME/.config/yazi"
-  "$LAZYGIT_DIR"
-)
+usage() {
+  cat <<'EOF'
+usage: install.sh [tool...]   deploy configs for the named tools
+                               (no args: menu on a terminal, everything when piped)
+       install.sh --list      tool | binary gate | config state
+       install.sh --dry-run   print decisions, change nothing
+Tools are registry keys with a config (install.sh --list), e.g. install.sh tmux nvim
+EOF
+  exit 2
+}
 
 timestamp() { date +%Y%m%d-%H%M%S; }
 
-# A source is deployable when it is a plain file (e.g. zshrc), or a directory
-# that holds anything beyond its README placeholder. Placeholder-only dirs are
-# skipped so the skeleton stage never touches live configs on the machine.
-source_is_ready() {
-  local src="$1"
-  if [[ -f "$REPO_ROOT/$src" ]]; then
-    return 0
-  fi
-  local entries
-  entries=$(find "$REPO_ROOT/$src" -mindepth 1 -maxdepth 1 ! -name 'README.md' -print -quit 2>/dev/null)
-  [[ -n "$entries" ]]
+cfg_tools() { # registry keys that carry a config (menu/default scope)
+  local t
+  for t in $(reg_names); do
+    if [[ -n $(reg_field "$t" cfg) ]]; then
+      printf '%s\n' "$t"
+    fi
+  done
+  return 0
 }
 
-link_one() {
-  local src="$1" dst="$2"
-
+link_one() { # link_one <src> <dst> — placeholder-skip, backup, link (unchanged
+  # semantics from the original install.sh)
+  local src="$1" dst="$2" backup
   if ! source_is_ready "$src"; then
-    printf 'SKIP   %-24s (not configured in this repo yet)\n' "$src"
+    printf 'SKIP    %-24s (not configured in this repo yet)\n' "$src"
     return 0
   fi
-
   if [[ -L "$dst" && "$(readlink "$dst")" == "$REPO_ROOT/$src" ]]; then
-    printf 'OK     %-24s -> %s (already linked)\n' "$src" "$dst"
+    printf 'OK      %-24s -> %s (already linked)\n' "$src" "$dst"
     return 0
   fi
-
+  if [[ -n $DRY ]]; then
+    if [[ -e "$dst" || -L "$dst" ]]; then
+      printf 'DRY BACKUP %s -> %s.bak.<ts>\n' "$dst" "$dst"
+    fi
+    printf 'DRY LINK   %s -> %s\n' "$REPO_ROOT/$src" "$dst"
+    return 0
+  fi
   mkdir -p "$(dirname "$dst")"
-
   if [[ -e "$dst" || -L "$dst" ]]; then
-    local backup="$dst.bak.$(timestamp)"
+    backup="$dst.bak.$(timestamp)"
     mv "$dst" "$backup"
     printf 'BACKUP %s -> %s\n' "$dst" "$backup"
   fi
-
   ln -s "$REPO_ROOT/$src" "$dst"
   printf 'LINK   %-24s -> %s\n' "$src" "$dst"
+  return 0
 }
+
+GATED=0
+
+deploy_tool() { # deploy_tool <tool> — binary gate, then link every config pair
+  local tool="$1" state src dst doc
+  state=$(tool_state "$tool")
+  if [[ $state == missing ]]; then
+    GATED=$((GATED + 1))
+    printf 'GATE    %-8s binary not installed — config NOT deployed\n' "$tool"
+    printf '        install first:  scripts/tools.sh --auto %s   (--manual shows commands)\n' "$tool"
+    doc=$(reg_field "$tool" docs)
+    if [[ -n $doc ]]; then
+      printf '        background:     %s\n' "$doc"
+    fi
+    if is_interactive && confirm "        run the automatic install for $tool now? [y/N] " n; then
+      "$SCRIPTS/tools.sh" --auto "$tool" || true
+      state=$(tool_state "$tool")
+    fi
+    if [[ $state == missing ]]; then
+      return 0
+    fi
+    printf 'GATE    %-8s cleared after install — deploying\n' "$tool"
+  fi
+  if [[ $state == old* ]]; then
+    printf 'WARN    %-8s %s — older than the recorded minimum, deploying anyway\n' "$tool" "$state"
+  fi
+  while IFS=$'\t' read -r src dst; do
+    if [[ -z $src || -z $dst ]]; then continue; fi
+    link_one "$src" "$dst"
+  done < <(config_pairs_for "$tool")
+  return 0
+}
+
+list_table() { # --list
+  local t state cstate
+  printf '%-10s %-9s %s\n' TOOL BINARY CONFIG
+  for t in $(cfg_tools); do
+    state=$(tool_state "$t")
+    state="${state%% *}"           # ok | old | missing
+    cstate=$(config_state "$t")
+    printf '%-10s %-9s %s\n' "$t" "$state" "$cstate"
+  done
+  return 0
+}
+
+# --- Arguments -------------------------------------------------------------------
+
+LIST=0 DRY="" ALL=0
+WANT=()
+while (( $# > 0 )); do
+  case "$1" in
+    --list) LIST=1 ;;
+    --dry-run) DRY=1 ;;
+    --all) ALL=1 ;;
+    -h | --help) usage ;;
+    -*) printf 'unknown flag: %s\n\n' "$1" >&2; usage ;;
+    *)
+      reg_has "$1" || die "unknown tool: $1 (install.sh --list)"
+      if [[ -z $(reg_field "$1" cfg) ]]; then
+        die "$1 has no config in this repo (companion tool — nothing to deploy)"
+      fi
+      WANT+=("$1")
+      ;;
+  esac
+  shift
+done
+
+if [[ $LIST == 1 ]]; then
+  list_table
+  exit 0
+fi
+
+if [[ $ALL == 1 ]]; then
+  WANT=($(cfg_tools))
+elif (( ${#WANT[@]} == 0 )); then
+  if is_interactive; then
+    menu_want=""
+    menu_select menu_want $(cfg_tools)
+    if [[ -z $menu_want ]]; then
+      printf 'Nothing selected.\n'
+      exit 0
+    fi
+    WANT=($menu_want)
+  else
+    WANT=($(cfg_tools))
+  fi
+fi
 
 printf 'Deploying arronflow configs from %s\n\n' "$REPO_ROOT"
 
-for i in "${!SOURCES[@]}"; do
-  link_one "${SOURCES[$i]}" "${TARGETS[$i]}"
+for t in "${WANT[@]}"; do
+  deploy_tool "$t"
 done
+
+if (( GATED > 0 )); then
+  printf '\n%d config(s) gated off — install the tool(s) first, then re-run.\n' "$GATED"
+  exit 1
+fi
 
 printf '\nDone. Restart running apps (or reload their config) to pick up changes.\n'

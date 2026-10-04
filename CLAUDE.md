@@ -37,16 +37,21 @@ teach the same content narratively in Chinese; the English doc is the durable ve
 ## Layout
 
 - `config/<tool>/` — canonical config files. Deployed as symlinks; the link manifest lives in
-  `scripts/install.sh`.
+  `scripts/lib/registry.sh` (one line per tool: binaries, packages, configs, docs).
 - `docs/<tool>.md` — per-tool documentation (role, rationale, config walkthrough, key
   bindings). `docs/workflow.md` explains how the tools compose.
 - `Brewfile` — tool dependencies (`brew bundle install`).
-- `scripts/bootstrap.sh` — full setup on a new Mac (Homebrew + Brewfile, Oh My Zsh & plugins,
-  then `install.sh`).
-- `scripts/install.sh` — idempotent symlink deployment; backs up existing files as
-  `*.bak.<timestamp>`.
+- `scripts/bootstrap.sh` — front door: numbered menu on a terminal, flags when piped; hands
+  off to the phase scripts below.
+- `scripts/tools.sh` — phase 1: tool installation, `--auto` or `--manual` (commands only).
+- `scripts/install.sh` — phase 2: idempotent symlink deployment, gated on the tool's binary
+  being installed; backs up existing files as `*.bak.<timestamp>`.
+- `scripts/doctor.sh` — read-only health report (binary, version, config link) + manual
+  install commands for the gaps.
 - `scripts/session.sh` — create-or-attach helper for named tmux sessions (the daily
   "one session per project" workflow).
+- `scripts/lib/` — `registry.sh` (the per-tool data every script reads) and `common.sh`
+  (shared checks/prompts).
 
 ## Working rules
 

@@ -15,9 +15,9 @@ Git TUI. Staging hunks and lines, committing, branching, interactive rebasing, c
 
 ## Installation
 
-`brew bundle install` — `lazygit` in the [`Brewfile`](../Brewfile).
-On Linux, `scripts/bootstrap.sh` installs it instead (distro package, or the
-official release binary into `~/.local/bin` where the distro has none).
+`scripts/tools.sh --auto lazygit` (`--manual` prints the commands) — also
+`lazygit` in the [`Brewfile`](../Brewfile); on Linux a distro package, or the
+official release binary into `~/.local/bin` where the distro has none.
 
 ## Configuration
 

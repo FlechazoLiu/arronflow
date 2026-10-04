@@ -95,8 +95,9 @@ mode — goes to both places. No Cmd+C is needed; like Ghostty's
 ## Installation
 
 ```sh
-brew bundle install        # or: brew install tmux
-tmux -V                    # 3.7c at the time of writing; repo targets >= 3.4
+scripts/tools.sh --auto tmux    # or: brew install tmux
+scripts/install.sh tmux         # deploy ~/.config/tmux
+tmux -V                         # 3.7c at the time of writing; repo targets >= 3.4
 ```
 
 tmux ≥ 3.1 reads `~/.config/tmux/tmux.conf` (XDG) — the path this repo

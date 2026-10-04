@@ -52,9 +52,14 @@ How the six tools compose into one environment.
 The whole environment is this repo:
 
 1. `git clone` it anywhere,
-2. `scripts/bootstrap.sh` installs the tools,
-3. `scripts/install.sh` symlinks the configs,
-4. pick up exactly where you left off.
+2. `scripts/tools.sh --auto` installs the tool binaries (`--manual` prints
+   the commands instead — the downloads stay yours),
+3. `scripts/install.sh` symlinks each tool's config, gated on its binary
+   being installed,
+4. `scripts/doctor.sh` reports anything missing,
+5. pick up exactly where you left off.
+
+The framework behind the four scripts: [scripts.md](scripts.md).
 
 ## Decisions
 

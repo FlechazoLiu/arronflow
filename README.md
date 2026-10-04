@@ -21,37 +21,32 @@ How the tools compose: [docs/workflow.md](docs/workflow.md).
 
 ## Setup on a new machine
 
-macOS:
+Two independent phases, both driven by one registry ([scripts.md](docs/scripts.md)):
+
+1. **Tools** — `scripts/tools.sh --auto` installs the binaries; `--manual` prints the exact
+   commands for your platform (brew / pacman / apt / dnf / GitHub releases) and installs
+   nothing — for when the downloads are your job.
+2. **Configs** — `scripts/install.sh` symlinks this repo's configs into place, **gated** on
+   the tool's binary being installed (no tmux → no tmux config; tools never block each
+   other). Idempotent; foreign files at a target are backed up, never clobbered.
+
+`scripts/bootstrap.sh` is the interactive front door (numbered menu on a terminal, flags
+when piped) and `scripts/doctor.sh` is the read-only report of what is installed, adequate,
+and linked — plus the manual commands for the gaps.
 
 ```sh
 git clone <this-repo> ~/arronflow && cd ~/arronflow
-scripts/bootstrap.sh   # Homebrew + Brewfile, Oh My Zsh & plugins, then deploys configs
+scripts/bootstrap.sh --everything --auto --all --dry-run   # see the plan first
+scripts/bootstrap.sh --everything --auto --all             # do it
+scripts/doctor.sh                                         # verify
 ```
 
-Or manually, in two steps:
-
-```sh
-brew bundle install    # install every tool from the Brewfile
-scripts/install.sh     # symlink configs into place (idempotent, backs up existing files)
-```
-
-Linux (Arch, Debian/Ubuntu, Fedora families — x86_64 and aarch64):
-
-```sh
-git clone <this-repo> ~/arronflow && cd ~/arronflow
-scripts/bootstrap.sh   # distro packages + GitHub release binaries, OMz, configs
-```
-
-The same script dispatches on the OS. On Linux it uses the distro's package
-manager for everything the distro ships (on Arch that is the whole stack), and
-falls back to official GitHub release binaries in `~/.local/bin` for the rest
-(Ubuntu's repos lack lazygit/yazi/eza and ship a Neovim older than LazyVim's
-≥ 0.11 requirement — the release tarball covers it). The Maple Mono NF CN font
-comes from its GitHub release into `~/.local/share/fonts`. Ghostty is packaged
-on Arch and Ubuntu ≥ 26.04; elsewhere the script prints the community-repo
-options (the rest of the stack runs in any terminal). The per-tool pages in
-`docs/` show the macOS install commands; on Linux, `bootstrap.sh` is the path.
-`scripts/session.sh` and all configs under `config/` are platform-independent.
+Platform notes — macOS: Homebrew; `--all` is one Brewfile transaction. Linux (Arch /
+Debian-Ubuntu / Fedora, x86_64 & aarch64): distro packages where current, official GitHub
+release binaries into `~/.local/bin` where not (Ubuntu's repos lack lazygit/yazi/eza and
+ship a Neovim older than LazyVim's ≥ 0.11). The Maple Mono NF CN font installs from its
+release; Ghostty is native on Arch and Ubuntu ≥ 26.04, community-built elsewhere —
+optional, the rest of the stack runs in any terminal.
 
 ## Design decisions
 
@@ -63,7 +58,11 @@ options (the rest of the stack runs in any terminal). The per-tool pages in
   explanation rots.
 - **Idempotent scripts.** Re-running setup is always safe; existing files at a target location
   are moved aside as `*.bak.<timestamp>`, never silently overwritten.
-- **Native first on Linux.** `bootstrap.sh` prefers the distro's own packages
+- **Install and configure are separate phases.** Binaries via `tools.sh`
+  (automatic, or manual-command mode for people who manage their own packages);
+  configs via `install.sh`, deployed only when the tool's binary exists. One
+  declarative registry (`scripts/lib/registry.sh`) drives both, plus `doctor.sh`.
+- **Native first on Linux.** `tools.sh` prefers the distro's own packages
   (pacman/apt/dnf) and only falls back to official GitHub release binaries
   (`~/.local/bin`, which the zshrc puts first on PATH) where the distro has
   nothing current to offer. Homebrew stays macOS-only.
@@ -87,7 +86,8 @@ Built tool-by-tool — each row lights up as the step-by-step setup progresses.
 | lazygit             | ⬜         | ⬜         |
 | yazi                | ⬜         | ⬜         |
 | zsh + Oh My Zsh     | ✅         | ✅         |
-| Linux bootstrap (Arch/Debian/Fedora) | 🔄 | ✅ |
+| [Script framework](docs/scripts.md) (registry, two phases, doctor) | ✅ | ✅ |
+| Linux support (Arch/Debian/Fedora) | 🔄 | ✅ |
 
 ## License
 

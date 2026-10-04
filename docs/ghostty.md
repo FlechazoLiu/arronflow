@@ -91,11 +91,14 @@ scrollback.
 ## Installation
 
 ```sh
-brew bundle install   # cask "ghostty" + cask "font-maple-mono-nf-cn"
+scripts/tools.sh --auto ghostty   # brew cask "ghostty" + the Maple font cask
+scripts/install.sh ghostty        # deploy ~/.config/ghostty
 ```
 
-Everything is in the [`Brewfile`](../Brewfile). On a fresh Mac,
-`scripts/bootstrap.sh` covers this.
+On Linux the casks become a distro package (Arch, Ubuntu ≥ 26.04) or the
+community options `tools.sh --manual ghostty` prints; the Maple font comes
+from its GitHub release. Everything is also in the
+[`Brewfile`](../Brewfile). Framework: [scripts.md](scripts.md).
 
 ## Our configuration
 

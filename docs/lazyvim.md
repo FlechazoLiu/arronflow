@@ -103,6 +103,9 @@ scripts/install.sh    # backs up ~/.config/nvim, symlinks config/nvim
 nvim                  # first launch: clones lazy.nvim + 32 plugins
 ```
 
+On a fresh machine today the same path is: `scripts/tools.sh --auto nvim`
+then `scripts/install.sh nvim` (see [scripts.md](scripts.md)).
+
 First-launch expectations: the dashboard (snacks) on a bare `nvim`;
 tokyonight-moon colors; a one-time pause while treesitter parsers
 compile; on opening a `.lua` file, Mason installs `lua_ls` over the

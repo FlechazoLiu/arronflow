@@ -16,8 +16,9 @@ bulk operations, and a smooth hand-off into the shell, Neovim, or lazygit.
 
 ## Installation
 
-`brew bundle install` — `yazi` in the [`Brewfile`](../Brewfile) (optional preview renderers
-listed there too).
+`scripts/tools.sh --auto yazi` (`--manual` prints the commands; on Linux that
+is the official release zip providing both `yazi` and `ya`). Also `yazi` in
+the [`Brewfile`](../Brewfile) (optional preview renderers listed there too).
 
 ## Configuration
 

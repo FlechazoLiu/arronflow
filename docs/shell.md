@@ -101,9 +101,13 @@ responsibility; no scattering.
 ## Installation
 
 ```sh
-brew bundle install   # zoxide, fzf, eza, bat, ripgrep, fd, fastfetch
-scripts/bootstrap.sh  # fresh Mac: OMz + external plugins + p10k theme, then install.sh
+scripts/tools.sh --auto zsh    # or: brew bundle install + the OMz clones below
+scripts/install.sh zsh         # deploy ~/.zshrc + ~/.p10k.zsh
 ```
+
+`tools.sh --auto zsh` also clones Oh My Zsh plus the external plugins and the
+p10k theme into `~/.oh-my-zsh/custom/` (`--manual` prints every command
+instead). Framework: [scripts.md](scripts.md).
 
 ## Our configuration
 
