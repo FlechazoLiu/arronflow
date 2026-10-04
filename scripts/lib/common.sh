@@ -112,7 +112,10 @@ ver_ge() { # ver_ge <got> <min> — exit 0 when got >= min
 
 tool_state() { # tool_state <tool> → "ok <bin> <ver>" | "old <bin> <ver> <min>" | "missing"
   local tool="$1" bins bin first ver vmin
-  bins=$(reg_field "$tool" bins)
+  # bins is COMMA-separated ("yazi,ya"); word-splitting alone would treat
+  # the whole list as one nonexistent command name. (Found the hard way:
+  # yazi installed fine yet reported missing on the Ubuntu VM.)
+  bins=$(reg_field "$tool" bins | tr ',' ' ')
   first=""
   for bin in $bins; do
     have "$bin" || { printf 'missing\n'; return 0; }
