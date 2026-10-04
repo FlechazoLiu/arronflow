@@ -91,7 +91,8 @@ deploy_tool() { # deploy_tool <tool> — binary gate, then link every config pai
     if [[ -n $doc ]]; then
       printf '        background:     %s\n' "$doc"
     fi
-    if is_interactive && confirm "        run the automatic install for $tool now? [y/N] " n; then
+    # Never offer (let alone launch) an install from inside --dry-run.
+    if is_interactive && [[ -z $DRY ]] && confirm "        run the automatic install for $tool now? [y/N] " n; then
       "$SCRIPTS/tools.sh" --auto "$tool" || true
       state=$(tool_state "$tool")
     fi

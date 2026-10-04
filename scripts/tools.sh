@@ -279,7 +279,10 @@ ensure_prereqs() { # small plumbing set for the selected tools (Linux only)
   done
   printf 'PREREQ  %s\n' "${base[*]}"
   case "$PKG" in
-    pacman) run_root pacman -Sy --needed --noconfirm "${base[@]}" ;;
+    # Arch: -Syu, NEVER bare -Sy — a partial upgrade can leave mismatched
+    # libraries (e.g. a new curl against an old ngtcp2) that crash pacman
+    # itself. Rolling distros must converge fully; --needed keeps it quiet.
+    pacman) run_root pacman -Syu --needed --noconfirm "${base[@]}" ;;
     apt)
       run_root apt-get update
       DEBIAN_FRONTEND=noninteractive run_root apt-get install -y "${base[@]}"
@@ -341,7 +344,7 @@ summary() { # final state of the wanted tools (ghostty-missing stays a warning:
       issues=$((issues + 1))
     fi
   done
-  if [[ $(uname -s) == Linux && ${SHELL:-} != */zsh ]]; then
+  if [[ $(uname -s) == Linux && ${SHELL:-} != */zsh ]] && have zsh; then
     if printf '%s\n' "${WANT[@]}" | grep -qx zsh; then
       printf '\nOne more step: make zsh the login shell →  chsh -s "$(command -v zsh)"\n'
     fi
