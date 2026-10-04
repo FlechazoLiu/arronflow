@@ -32,6 +32,7 @@ brew "bat"         # cat replacement (aliased as cat)
 brew "ripgrep"     # fast grep — used by its own name (rg)
 brew "fd"          # fast find — used by its own name (fd)
 brew "fastfetch"   # system info greeting (fast neofetch successor)
+brew "gum"         # lightweight interactive UI for the arron setup command
 
 # --- Optional yazi preview renderers ---
 # brew "ffmpeg"    # video previews

@@ -52,14 +52,13 @@ How the six tools compose into one environment.
 The whole environment is this repo:
 
 1. `git clone` it anywhere,
-2. `scripts/tools.sh --auto` installs the tool binaries (`--manual` prints
-   the commands instead — the downloads stay yours),
-3. `scripts/install.sh` symlinks each tool's config, gated on its binary
-   being installed,
-4. `scripts/doctor.sh` reports anything missing,
-5. pick up exactly where you left off.
+2. run `./scripts/arron` — it bootstraps the lightweight gum UI, then gives
+   one menu for every operation,
+3. `arron tools` installs binaries (`--manual` prints commands instead),
+4. `arron config` deploys each config, gated on its binary,
+5. `arron doctor` reports anything missing; `arron session` enters work.
 
-The framework behind the four scripts: [scripts.md](scripts.md).
+The framework behind the command: [scripts.md](scripts.md).
 
 ## Decisions
 

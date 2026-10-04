@@ -22,6 +22,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SCRIPTS="$REPO_ROOT/scripts"
 source "$SCRIPTS/lib/common.sh"
 source "$SCRIPTS/lib/registry.sh"
+source "$SCRIPTS/lib/ui.sh"
 prepend_paths
 
 LOCAL_BIN="$HOME/.local/bin"   # release binaries + Debian rename links land here
@@ -79,7 +80,7 @@ fetch_release() { # fetch_release <owner/repo> <asset> → path in $RELEASE_TMP
   RELEASE_TMP=$(mktemp -d)
   url="https://github.com/$repo/releases/download/$tag/$asset"
   printf 'FETCH   %s\n' "$url"
-  curl -fL --progress-bar -o "$RELEASE_TMP/$asset" "$url"
+  ui_spin "Downloading $repo $tag" curl -fL -o "$RELEASE_TMP/$asset" "$url"
 }
 
 put_bin() { # put_bin <downloaded-path> <name> — GNU install -D; Linux path only
@@ -140,6 +141,15 @@ gh_install() { # gh_install <tool> — registry-driven release-binary install
         mkdir -p "$LOCAL_BIN"
         ln -sf "$root/bin/nvim" "$LOCAL_BIN/nvim"
         printf 'BIN     %s -> %s\n' "$LOCAL_BIN/nvim" "$root"
+        rm -rf "$RELEASE_TMP"
+      fi
+      ;;
+    gum)
+      # gum's tarball has a versioned directory (not a flat binary).
+      fetch_release "$repo" "$asset"
+      if [[ -z $DRY ]]; then
+        tar -xzf "$RELEASE_TMP/"*.tar.gz -C "$RELEASE_TMP"
+        put_bin "$RELEASE_TMP"/gum_*/gum gum
         rm -rf "$RELEASE_TMP"
       fi
       ;;
@@ -327,7 +337,7 @@ manual_mode() {
   for t in "${WANT[@]}"; do
     print_manual_block "$t" "$PKG"
   done
-  printf '\nAfter installing, re-check with: scripts/doctor.sh\n'
+  printf '\nAfter installing, re-check with: arron doctor\n'
 }
 
 # --- Shared output ------------------------------------------------------------------
@@ -353,7 +363,11 @@ summary() { # final state of the wanted tools (ghostty-missing stays a warning:
     fi
   fi
   if (( issues > 0 )); then
-    die "$issues tool(s) still missing — see the commands above or scripts/doctor.sh"
+    if [[ -n $DRY ]]; then
+      printf '\nDRY     %d tool(s) remain missing because no changes were made.\n' "$issues"
+      return 0
+    fi
+    die "$issues tool(s) still missing — see the commands above or run: arron doctor"
   fi
   return 0
 }
@@ -402,7 +416,7 @@ if [[ $ALL == 1 ]]; then
 elif (( ${#WANT[@]} == 0 )); then
   if is_interactive; then
     menu_want=""
-    menu_select menu_want $(reg_names)
+    ui_multiselect menu_want 'Select tools to install (Space toggles; Enter accepts)' $(reg_names)
     if [[ -z $menu_want ]]; then
       printf 'Nothing selected.\n'
       exit 0

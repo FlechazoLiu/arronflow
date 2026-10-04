@@ -1,0 +1,186 @@
+#!/usr/bin/env bash
+#
+# arron — the one front door to arronflow.
+#
+#   arron                         interactive menu
+#   arron up [--auto|--manual] [--all|tool...]
+#   arron tools [--auto|--manual] [--all|tool...]
+#   arron config [--all|tool...] [--dry-run]
+#   arron doctor [tool...]
+#   arron session [name] [directory]
+#   arron list
+#
+# The first interactive run bootstraps gum (with one unavoidable plain-bash
+# prompt); afterward menus/confirmations/spinners use gum. Pipes and CI skip
+# UI entirely. scripts/bootstrap.sh is a compatibility shim to this command.
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPTS="$REPO_ROOT/scripts"
+source "$SCRIPTS/lib/common.sh"
+source "$SCRIPTS/lib/registry.sh"
+source "$SCRIPTS/lib/ui.sh"
+prepend_paths
+
+usage() {
+  cat <<'EOF'
+arron — one command for the arronflow environment
+
+usage:
+  arron                         interactive menu
+  arron up [--auto|--manual] [--all|tool...] [--dry-run]
+  arron tools [--auto|--manual] [--all|tool...] [--dry-run]
+  arron config [--all|tool...] [--dry-run]
+  arron doctor [tool...]
+  arron session [name] [directory]
+  arron list
+  arron help
+
+phases: tools installs binaries; config deploys symlinks (binary-gated);
+doctor only reads. `up` runs tools then config.
+EOF
+}
+
+choose_mode() { # sets global MODE_FLAG
+  local pick
+  pick=$(ui_choose 'How should arronflow install tools?' \
+    'auto    install automatically' \
+    'manual  print commands only')
+  case "$pick" in
+    auto*) MODE_FLAG=--auto ;;
+    manual*) MODE_FLAG=--manual ;;
+    *) MODE_FLAG="" ;;
+  esac
+}
+
+run_tools() { # args are forwarded; add a mode interactively when absent
+  local arg has_mode=0
+  for arg in "$@"; do
+    case "$arg" in --auto | --manual) has_mode=1 ;; esac
+  done
+  if (( has_mode == 0 )); then
+    if is_interactive; then
+      ui_ensure_gum "$SCRIPTS"
+      choose_mode
+      [[ -n $MODE_FLAG ]] || return 0
+      exec "$SCRIPTS/tools.sh" "$MODE_FLAG" "$@"
+    fi
+    printf 'arron tools: --auto or --manual is required when piped\n' >&2
+    return 2
+  fi
+  exec "$SCRIPTS/tools.sh" "$@"
+}
+
+run_up() { # install phase then config phase; same selectors/--dry-run reach both
+  local arg mode="" dry="" all="" passthrough="" config_tools=""
+  for arg in "$@"; do
+    case "$arg" in
+      --auto | --manual) mode="$arg" ;;
+      --dry-run) dry="$arg" ;;
+      --all) all="$arg" ;;
+      *) passthrough="$passthrough $arg" ;;
+    esac
+  done
+  passthrough="${passthrough# }"
+  if [[ -z $mode ]]; then
+    if is_interactive; then
+      ui_ensure_gum "$SCRIPTS"
+      choose_mode
+      mode="$MODE_FLAG"
+      [[ -n $mode ]] || return 0
+    else
+      printf 'arron up: --auto or --manual is required when piped\n' >&2
+      return 2
+    fi
+  fi
+  # A real tool-install failure stops `up`: continuing would hide the root
+  # cause behind a wall of config gates (and companion-only failures have no
+  # config gate at all). Optional Ghostty already returns WARN/0 on Linux;
+  # tools.sh also makes "still missing" non-fatal during a dry-run.
+  "$SCRIPTS/tools.sh" "$mode" $all $dry $passthrough
+  if [[ -n $all ]]; then
+    exec "$SCRIPTS/install.sh" --all $dry
+  fi
+  # Companion tools (gum/fzf/...) have no config. Filter them instead of
+  # handing install.sh an impossible selector; still deploy the arron command.
+  for arg in $passthrough; do
+    if reg_has "$arg" && [[ -n $(reg_field "$arg" cfg) ]]; then
+      config_tools="$config_tools $arg"
+    fi
+  done
+  config_tools="${config_tools# }"
+  if [[ -n $config_tools ]]; then
+    exec "$SCRIPTS/install.sh" $dry $config_tools
+  fi
+  exec "$SCRIPTS/install.sh" --entrypoint-only $dry
+}
+
+run_session() {
+  if ! have tmux; then
+    ui_err 'tmux is not installed.'
+    printf 'Install it first: arron tools --auto tmux\n' >&2
+    return 1
+  fi
+  exec "$SCRIPTS/session.sh" "$@"
+}
+
+interactive_menu() {
+  local pick command name dir
+  ui_ensure_gum "$SCRIPTS"
+  ui_title 'arronflow'
+  pick=$(ui_choose 'What do you want to do?' \
+    'up       install tools, then deploy configs' \
+    'tools    install tool binaries' \
+    'config   deploy configs (binary-gated)' \
+    'doctor   read-only health report' \
+    'session  create, attach, or list tmux sessions' \
+    'quit')
+  command="${pick%% *}"
+  case "$command" in
+    up) run_up ;;
+    tools) run_tools ;;
+    config) exec "$SCRIPTS/install.sh" ;;
+    doctor) exec "$SCRIPTS/doctor.sh" ;;
+    session)
+      name=""; dir=""
+      ui_input 'Session name (blank = list)' name
+      if [[ -z $name ]]; then run_session; fi
+      ui_input "Root directory (blank = $PWD)" dir
+      if [[ -n $dir ]]; then
+        run_session "$name" "$dir"
+      fi
+      run_session "$name"
+      ;;
+    quit | "") return 0 ;;
+    *) die "unknown menu choice: $pick" ;;
+  esac
+}
+
+if (( $# == 0 )); then
+  if is_interactive; then
+    interactive_menu
+    exit 0
+  fi
+  usage >&2
+  exit 2
+fi
+
+COMMAND="$1"; shift
+case "$COMMAND" in
+  up) run_up "$@" ;;
+  tools) run_tools "$@" ;;
+  config | configs)
+    if (( $# == 0 )) && is_interactive; then ui_ensure_gum "$SCRIPTS"; fi
+    exec "$SCRIPTS/install.sh" "$@"
+    ;;
+  doctor) exec "$SCRIPTS/doctor.sh" "$@" ;;
+  session) run_session "$@" ;;
+  list) exec "$SCRIPTS/tools.sh" --list "$@" ;;
+  help | -h | --help) usage ;;
+  *)
+    printf 'arron: unknown command: %s\n\n' "$COMMAND" >&2
+    usage >&2
+    exit 2
+    ;;
+esac

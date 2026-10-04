@@ -61,7 +61,7 @@ understand). OMz is the right amount of magic for this stack.
 ```
 
 `custom/` is the important lesson: an OMz update resets everything *except* `custom/`, so
-anything external gets cloned there (`scripts/bootstrap.sh` does this).
+anything external gets cloned there (`arron tools --auto zsh` does this).
 
 ## Concepts
 
@@ -101,11 +101,11 @@ responsibility; no scattering.
 ## Installation
 
 ```sh
-scripts/tools.sh --auto zsh    # or: brew bundle install + the OMz clones below
-scripts/install.sh zsh         # deploy ~/.zshrc + ~/.p10k.zsh
+arron tools --auto zsh    # or: brew bundle install + the OMz clones below
+arron config zsh         # deploy ~/.zshrc + ~/.p10k.zsh
 ```
 
-`tools.sh --auto zsh` also clones Oh My Zsh plus the external plugins and the
+`arron tools --auto zsh` also clones Oh My Zsh plus the external plugins and the
 p10k theme into `~/.oh-my-zsh/custom/` (`--manual` prints every command
 instead). Framework: [scripts.md](scripts.md).
 
@@ -236,7 +236,7 @@ left. `fastfetch --gen-config` regenerates the full default list for reference.
   `zsh -i -c 'print ${(k)#parameters[(I)POWERLEVEL9K_*]}'` — a healthy shell reports
   ~314, a broken one reports 0.
 - **`command not found: fastfetch` etc. after a fresh clone.** Run `brew bundle install`
-  and `scripts/bootstrap.sh` before the first shell start; the fastfetch line is guarded,
+  and `arron up --auto --all` before the first shell start; the fastfetch line is guarded,
   the rest fail loudly on purpose.
 - **Where did my old `~/.zshrc` and `~/.p10k.zsh` go?** `scripts/install.sh` moved each
   to `<name>.bak.<timestamp>` before symlinking; the live `~/.p10k.zsh` is a symlink to

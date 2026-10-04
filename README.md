@@ -21,24 +21,23 @@ How the tools compose: [docs/workflow.md](docs/workflow.md).
 
 ## Setup on a new machine
 
-Two independent phases, both driven by one registry ([scripts.md](docs/scripts.md)):
+Two independent phases behind one command ([scripts.md](docs/scripts.md)):
 
-1. **Tools** — `scripts/tools.sh --auto` installs the binaries; `--manual` prints the exact
-   commands for your platform (brew / pacman / apt / dnf / GitHub releases) and installs
-   nothing — for when the downloads are your job.
-2. **Configs** — `scripts/install.sh` symlinks this repo's configs into place, **gated** on
-   the tool's binary being installed (no tmux → no tmux config; tools never block each
-   other). Idempotent; foreign files at a target are backed up, never clobbered.
+1. **Tools** — `arron tools --auto` installs binaries; `--manual` prints the exact commands
+   for brew / pacman / apt / dnf / GitHub releases and installs nothing.
+2. **Configs** — `arron config` symlinks configs, **gated** on each binary being present.
 
-`scripts/bootstrap.sh` is the interactive front door (numbered menu on a terminal, flags
-when piped) and `scripts/doctor.sh` is the read-only report of what is installed, adequate,
-and linked — plus the manual commands for the gaps.
+The first `./scripts/arron` run bootstraps the lightweight gum UI, then opens one menu for
+setup, health checks, and tmux sessions. The config phase links the command into
+`~/.local/bin`, so future shells can call `arron` from anywhere.
 
 ```sh
-git clone <this-repo> ~/arronflow && cd ~/arronflow
-scripts/bootstrap.sh --everything --auto --all --dry-run   # see the plan first
-scripts/bootstrap.sh --everything --auto --all             # do it
-scripts/doctor.sh                                         # verify
+git clone https://github.com/FlechazoLiu/arronflow.git ~/arronflow
+cd ~/arronflow
+./scripts/arron                         # interactive menu
+./scripts/arron up --auto --all --dry-run   # or preview the full setup
+./scripts/arron up --auto --all             # then execute it
+arron doctor                            # verify (after opening a new shell)
 ```
 
 Platform notes — macOS: Homebrew; `--all` is one Brewfile transaction. Linux (Arch /
@@ -58,11 +57,11 @@ optional, the rest of the stack runs in any terminal.
   explanation rots.
 - **Idempotent scripts.** Re-running setup is always safe; existing files at a target location
   are moved aside as `*.bak.<timestamp>`, never silently overwritten.
-- **Install and configure are separate phases.** Binaries via `tools.sh`
-  (automatic, or manual-command mode for people who manage their own packages);
-  configs via `install.sh`, deployed only when the tool's binary exists. One
-  declarative registry (`scripts/lib/registry.sh`) drives both, plus `doctor.sh`.
-- **Native first on Linux.** `tools.sh` prefers the distro's own packages
+- **One entrance, separate phases.** `arron` is the only command to remember; behind it,
+  tools and configs remain independent. A declarative registry (`scripts/lib/registry.sh`)
+  drives both, plus doctor. Gum gives the interactive UI; pure bash remains the first-run,
+  offline, and CI fallback.
+- **Native first on Linux.** `arron tools` prefers the distro's own packages
   (pacman/apt/dnf) and only falls back to official GitHub release binaries
   (`~/.local/bin`, which the zshrc puts first on PATH) where the distro has
   nothing current to offer. Homebrew stays macOS-only.
@@ -86,7 +85,7 @@ Built tool-by-tool — each row lights up as the step-by-step setup progresses.
 | lazygit             | ⬜         | ⬜         |
 | yazi                | ⬜         | ⬜         |
 | zsh + Oh My Zsh     | ✅         | ✅         |
-| [Script framework](docs/scripts.md) (registry, two phases, doctor) | ✅ | ✅ |
+| [Script framework](docs/scripts.md) (`arron`, gum UI, registry, two phases, doctor) | ✅ | ✅ |
 | Linux support (Arch/Debian/Fedora) | 🔄 | ✅ |
 
 ## License

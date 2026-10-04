@@ -8,7 +8,7 @@
 options, pane/window key bindings, the complete copy-and-paste layer
 (mouse selection, system clipboard, copy mode), the Atom One Dark
 theme pass, `escape-time` pinning, and the session-workflow helper
-(`scripts/session.sh`), and two keybinding reference pages:
+(`arron session`), and two keybinding reference pages:
 [tmux-keys-default.md](tmux-keys-default.md) — the stock tmux keymap
 (e.g. on servers) — and [tmux-keys-ours.md](tmux-keys-ours.md) — this
 machine's live keymap. Pending: a final keybinding-optimization pass.
@@ -95,8 +95,8 @@ mode — goes to both places. No Cmd+C is needed; like Ghostty's
 ## Installation
 
 ```sh
-scripts/tools.sh --auto tmux    # or: brew install tmux
-scripts/install.sh tmux         # deploy ~/.config/tmux
+arron tools --auto tmux    # or: brew install tmux
+arron config tmux         # deploy ~/.config/tmux
 tmux -V                         # 3.7c at the time of writing; repo targets >= 3.4
 ```
 
@@ -238,7 +238,7 @@ Two companion pages record the keymaps in full:
 
 ## Tuning & exploring
 
-- **One-command sessions**: `scripts/session.sh <name> [dir]` attaches to
+- **One-command sessions**: `arron session <name> [dir]` attaches to
   session `<name>`, creating it rooted at `dir` first if it does not
   exist; with no arguments it lists sessions. Inside tmux it uses
   `switch-client` instead of a nested `tmux attach` (which tmux refuses:

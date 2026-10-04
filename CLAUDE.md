@@ -2,7 +2,7 @@
 
 Personal macOS terminal-workflow repository: **Ghostty + tmux + Neovim + lazygit + yazi +
 zsh (Oh My Zsh)**. It exists so the whole environment can be tuned here, then rebuilt on a
-fresh machine or shared via `scripts/bootstrap.sh` + `scripts/install.sh`.
+fresh machine or shared through the unified `arron` command (`scripts/arron`).
 
 ## Language rules
 
@@ -41,29 +41,30 @@ teach the same content narratively in Chinese; the English doc is the durable ve
 - `docs/<tool>.md` — per-tool documentation (role, rationale, config walkthrough, key
   bindings). `docs/workflow.md` explains how the tools compose.
 - `Brewfile` — tool dependencies (`brew bundle install`).
-- `scripts/bootstrap.sh` — front door: numbered menu on a terminal, flags when piped; hands
-  off to the phase scripts below.
-- `scripts/tools.sh` — phase 1: tool installation, `--auto` or `--manual` (commands only).
-- `scripts/install.sh` — phase 2: idempotent symlink deployment, gated on the tool's binary
-  being installed; backs up existing files as `*.bak.<timestamp>`.
-- `scripts/doctor.sh` — read-only health report (binary, version, config link) + manual
-  install commands for the gaps.
-- `scripts/session.sh` — create-or-attach helper for named tmux sessions (the daily
-  "one session per project" workflow).
-- `scripts/lib/` — `registry.sh` (the per-tool data every script reads) and `common.sh`
-  (shared checks/prompts).
+- `scripts/arron` — the unified entry point: gum menu on a terminal, subcommands/flags when
+  scripted (`up`, `tools`, `config`, `doctor`, `session`, `list`). Config deployment links it
+  to `~/.local/bin/arron`; `scripts/bootstrap.sh` is a temporary compatibility shim.
+- `scripts/tools.sh` — internal phase 1 engine: tool installation, `--auto` or `--manual`.
+- `scripts/install.sh` — internal phase 2 engine: idempotent symlink deployment, gated on the
+  tool's binary; backs up existing files as `*.bak.<timestamp>`.
+- `scripts/doctor.sh` — internal read-only health report (binary, version, config link).
+- `scripts/session.sh` — internal create-or-attach helper for named tmux sessions.
+- `scripts/lib/` — `registry.sh` (per-tool data), `common.sh` (portable engine), and `ui.sh`
+  (gum controls + pure-bash first-run/offline/CI fallback).
 
 ## Working rules
 
 - The user configures tools **one at a time**. For each tool:
   1. Write the config under `config/<tool>/`.
-  2. Deploy/refresh it with `scripts/install.sh`.
+  2. Deploy/refresh it with `arron config <tool>`.
   3. Update `docs/<tool>.md` **and** the Status table in `README.md` in the same change —
      docs and config must never drift apart.
-  4. Add new dependencies to `Brewfile` (and to `bootstrap.sh` if they need a git clone).
+  4. Add new dependencies to both `Brewfile` and `scripts/lib/registry.sh`; add a dedicated
+     `gh_install` case in `scripts/tools.sh` only when the release archive is not flat.
 - Configs are **symlinked**: an edit in `~/.config/...` is an edit in this repo. Check
   `git status` before assuming the working tree is clean.
 - Never commit secrets, machine-specific absolute paths, or runtime state (see `.gitignore`).
-- Target platform: macOS (arm64), Homebrew, tmux ≥ 3.4, Neovim ≥ 0.11.
+- Target platforms: macOS arm64 + Linux x86_64/aarch64 (Arch, Debian/Ubuntu, Fedora);
+  tmux ≥ 3.4 and Neovim ≥ 0.11.
 - Keep conventions consistent across tools: vi-style `hjkl` navigation, true color end to
   end, Nerd Font icons.

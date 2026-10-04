@@ -9,7 +9,7 @@
 #
 # Gating: a tool's config deploys only when the tool's BINARY is installed —
 # no tmux, no tmux config. Tools are independent (skipping Ghostty never
-# blocks tmux). Install binaries first: scripts/tools.sh (--manual prints
+# blocks tmux). Install binaries first: `arron tools` (`--manual` prints
 # the commands for your platform). What gets linked lives in
 # lib/registry.sh — one record per tool.
 #
@@ -24,6 +24,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SCRIPTS="$REPO_ROOT/scripts"
 source "$SCRIPTS/lib/common.sh"
 source "$SCRIPTS/lib/registry.sh"
+source "$SCRIPTS/lib/ui.sh"
 prepend_paths
 
 usage() {
@@ -84,25 +85,25 @@ deploy_tool() { # deploy_tool <tool> — binary gate, then link every config pai
   local tool="$1" state src dst doc
   state=$(tool_state "$tool")
   if [[ $state == missing ]]; then
-    GATED=$((GATED + 1))
-    printf 'GATE    %-8s binary not installed — config NOT deployed\n' "$tool"
-    printf '        install first:  scripts/tools.sh --auto %s   (--manual shows commands)\n' "$tool"
+    ui_warn "$tool: binary not installed — config not deployed"
+    printf '        install first:  arron tools --auto %s   (--manual shows commands)\n' "$tool"
     doc=$(reg_field "$tool" docs)
     if [[ -n $doc ]]; then
       printf '        background:     %s\n' "$doc"
     fi
     # Never offer (let alone launch) an install from inside --dry-run.
-    if is_interactive && [[ -z $DRY ]] && confirm "        run the automatic install for $tool now? [y/N] " n; then
+    if is_interactive && [[ -z $DRY ]] && ui_confirm "Install $tool automatically now?" n; then
       "$SCRIPTS/tools.sh" --auto "$tool" || true
       state=$(tool_state "$tool")
     fi
     if [[ $state == missing ]]; then
+      GATED=$((GATED + 1))
       return 0
     fi
-    printf 'GATE    %-8s cleared after install — deploying\n' "$tool"
+    ui_ok "$tool: gate cleared after install — deploying"
   fi
   if [[ $state == old* ]]; then
-    printf 'WARN    %-8s %s — older than the recorded minimum, deploying anyway\n' "$tool" "$state"
+    ui_warn "$tool: $state — older than the recorded minimum; deploying anyway"
   fi
   while IFS=$'\t' read -r src dst; do
     if [[ -z $src || -z $dst ]]; then continue; fi
@@ -125,13 +126,14 @@ list_table() { # --list
 
 # --- Arguments -------------------------------------------------------------------
 
-LIST=0 DRY="" ALL=0
+LIST=0 DRY="" ALL=0 ENTRY_ONLY=0
 WANT=()
 while (( $# > 0 )); do
   case "$1" in
     --list) LIST=1 ;;
     --dry-run) DRY=1 ;;
     --all) ALL=1 ;;
+    --entrypoint-only) ENTRY_ONLY=1 ;;  # internal: `arron up gum` has no tool config
     -h | --help) usage ;;
     -*) printf 'unknown flag: %s\n\n' "$1" >&2; usage ;;
     *)
@@ -150,12 +152,14 @@ if [[ $LIST == 1 ]]; then
   exit 0
 fi
 
-if [[ $ALL == 1 ]]; then
+if [[ $ENTRY_ONLY == 1 ]]; then
+  WANT=()
+elif [[ $ALL == 1 ]]; then
   WANT=($(cfg_tools))
 elif (( ${#WANT[@]} == 0 )); then
   if is_interactive; then
     menu_want=""
-    menu_select menu_want $(cfg_tools)
+    ui_multiselect menu_want 'Select configs to deploy (Space toggles; Enter accepts)' $(cfg_tools)
     if [[ -z $menu_want ]]; then
       printf 'Nothing selected.\n'
       exit 0
@@ -168,9 +172,15 @@ fi
 
 printf 'Deploying arronflow configs from %s\n\n' "$REPO_ROOT"
 
-for t in "${WANT[@]}"; do
-  deploy_tool "$t"
-done
+# The unified command is itself deployed as a symlink, independent of every
+# tool gate. Before ~/.local/bin is on PATH, invoke it as ./scripts/arron.
+link_one "scripts/arron" "$HOME/.local/bin/arron"
+
+if [[ $ENTRY_ONLY != 1 ]]; then
+  for t in "${WANT[@]}"; do
+    deploy_tool "$t"
+  done
+fi
 
 if (( GATED > 0 )); then
   printf '\n%d config(s) gated off — install the tool(s) first, then re-run.\n' "$GATED"

@@ -65,6 +65,7 @@ REGISTRY=(
   "lazygit|lazygit|lazygit|--version||lazygit|lazygit|||jesseduffield/lazygit:lazygit_{ver}_linux_x86_64.tar.gz:lazygit_{ver}_linux_arm64.tar.gz:lazygit|config/lazygit::$LAZYGIT_DST|docs/lazygit.md|"
   "yazi|yazi|yazi,ya|--version||yazi|yazi|||sxyazi/yazi:yazi-x86_64-unknown-linux-gnu.zip:yazi-aarch64-unknown-linux-gnu.zip:yazi,ya|config/yazi::$HOME/.config/yazi|docs/yazi.md|"
   "fastfetch|fastfetch|fastfetch|--version||fastfetch|fastfetch|||fastfetch-cli/fastfetch:fastfetch-linux-amd64.tar.gz:fastfetch-linux-aarch64-polyfilled.tar.gz:fastfetch|config/fastfetch::$HOME/.config/fastfetch|docs/shell.md|"
+  "gum|gum (UI)|gum|--version||gum|gum||gum|charmbracelet/gum:gum_{ver}_Linux_x86_64.tar.gz:gum_{ver}_Linux_arm64.tar.gz:gum||||"
   "fzf|fzf|fzf|--version||fzf|fzf|fzf|fzf|||||"
   "zoxide|zoxide|zoxide|--version||zoxide|zoxide|||ajeetdsouza/zoxide:zoxide-{ver}-x86_64-unknown-linux-musl.tar.gz:zoxide-{ver}-aarch64-unknown-linux-musl.tar.gz:zoxide||||"
   "eza|eza|eza|--version||eza|eza|||eza-community/eza:eza_x86_64-unknown-linux-gnu.tar.gz:eza_aarch64-unknown-linux-gnu.tar.gz:eza||||"

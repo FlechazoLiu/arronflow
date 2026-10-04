@@ -16,6 +16,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SCRIPTS="$REPO_ROOT/scripts"
 source "$SCRIPTS/lib/common.sh"
 source "$SCRIPTS/lib/registry.sh"
+source "$SCRIPTS/lib/ui.sh"
 prepend_paths
 
 usage() {
@@ -57,7 +58,7 @@ MISSING_TOOLS=""
 note_for() { # note_for <tool> <state> <cstate> — the actionable hint (prints)
   local tool="$1" st="$2" cstate="$3"
   if [[ $st == missing ]]; then
-    printf 'install: scripts/tools.sh --auto %s' "$tool"
+    printf 'install: arron tools --auto %s' "$tool"
   elif [[ $st == old ]]; then
     printf 'upgrade to >= %s' "$(reg_field "$tool" min)"
   elif [[ $cstate == foreign ]]; then
@@ -65,14 +66,14 @@ note_for() { # note_for <tool> <state> <cstate> — the actionable hint (prints)
   elif [[ $cstate == placeholder ]]; then
     printf 'config pending in repo'
   elif [[ $cstate == unlinked ]]; then
-    printf 'deploy: scripts/install.sh %s' "$tool"
+    printf 'deploy: arron config %s' "$tool"
   else
     printf '-'
   fi
   return 0
 }
 
-printf '%-10s %-26s %-19s %-12s %s\n' TOOL BINARY VERSION CONFIG NOTE
+printf '%-3s %-10s %-26s %-19s %-12s %s\n' '' TOOL BINARY VERSION CONFIG NOTE
 for t in "${WANT[@]}"; do
   state=$(tool_state "$t")            # ok <bin> <ver> | old <bin> <ver> <min> | missing
   cstate=$(config_state "$t")
@@ -93,11 +94,17 @@ for t in "${WANT[@]}"; do
   if [[ $st == missing ]]; then
     MISSING_TOOLS="$MISSING_TOOLS $t"
   fi
-  if [[ $st != ok || $cstate == foreign ]]; then
+  marker="✓"
+  color=32
+  if [[ $st != ok || $cstate == foreign || $cstate == unlinked ]]; then
     ISSUES=$((ISSUES + 1))
+    marker="✗"; color=31
+  elif [[ $cstate == placeholder ]]; then
+    marker="⚠"; color=33
   fi
   note=$(note_for "$t" "$st" "$cstate")
-  printf '%-10s %-26s %-19s %-12s %s\n' "$t" "$(printf %.24s "$bin")" \
+  marker=$(ui_color "$color" "$marker")
+  printf '%-3s %-10s %-26s %-19s %-12s %s\n' "$marker" "$t" "$(printf %.24s "$bin")" \
     "$(printf %.17s "$ver")" "$cstate" "$note"
 done
 
@@ -108,7 +115,7 @@ if [[ -n ${MISSING_TOOLS# } && $PKG != unknown ]]; then
   for t in ${MISSING_TOOLS# }; do
     print_manual_block "$t" "$PKG"
   done
-  printf '\nor let the script do it: scripts/tools.sh --auto %s\n' "${MISSING_TOOLS# }"
+  printf '\nor let arron do it: arron tools --auto %s\n' "${MISSING_TOOLS# }"
 fi
 
 if (( ISSUES > 0 )); then

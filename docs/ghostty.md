@@ -91,12 +91,12 @@ scrollback.
 ## Installation
 
 ```sh
-scripts/tools.sh --auto ghostty   # brew cask "ghostty" + the Maple font cask
-scripts/install.sh ghostty        # deploy ~/.config/ghostty
+arron tools --auto ghostty   # brew cask "ghostty" + the Maple font cask
+arron config ghostty        # deploy ~/.config/ghostty
 ```
 
 On Linux the casks become a distro package (Arch, Ubuntu ≥ 26.04) or the
-community options `tools.sh --manual ghostty` prints; the Maple font comes
+community options `arron tools --manual ghostty` prints; the Maple font comes
 from its GitHub release. Everything is also in the
 [`Brewfile`](../Brewfile). Framework: [scripts.md](scripts.md).
 

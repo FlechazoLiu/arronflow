@@ -103,8 +103,8 @@ scripts/install.sh    # backs up ~/.config/nvim, symlinks config/nvim
 nvim                  # first launch: clones lazy.nvim + 32 plugins
 ```
 
-On a fresh machine today the same path is: `scripts/tools.sh --auto nvim`
-then `scripts/install.sh nvim` (see [scripts.md](scripts.md)).
+On a fresh machine today the same path is: `arron tools --auto nvim`
+then `arron config nvim` (see [scripts.md](scripts.md)).
 
 First-launch expectations: the dashboard (snacks) on a bare `nvim`;
 tokyonight-moon colors; a one-time pause while treesitter parsers
@@ -117,7 +117,7 @@ renaming back.
 External requirements, all already satisfied by this repo's Brewfile or
 macOS: Neovim ≥ 0.11.2, Git, a C compiler (Xcode CLT's clang, for
 treesitter parsers), `rg` + `fd` (pickers), the Maple Mono NF Nerd Font.
-On Linux, `scripts/bootstrap.sh` covers the same list: the official Neovim
+On Linux, `arron tools --auto nvim` covers the same list: the official Neovim
 release (distro packages lag behind 0.11), the distro's compiler toolchain,
 and the Maple font from its GitHub release.
 
