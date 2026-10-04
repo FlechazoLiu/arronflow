@@ -16,11 +16,14 @@ Git TUI. Staging hunks and lines, committing, branching, interactive rebasing, c
 ## Installation
 
 `brew bundle install` — `lazygit` in the [`Brewfile`](../Brewfile).
+On Linux, `scripts/bootstrap.sh` installs it instead (distro package, or the
+official release binary into `~/.local/bin` where the distro has none).
 
 ## Configuration
 
 Source of truth: [`config/lazygit/`](../config/lazygit/) → deployed to
-`~/Library/Application Support/lazygit/` (lazygit's default config dir on macOS).
+lazygit's platform config dir: `~/Library/Application Support/lazygit/` on
+macOS, `~/.config/lazygit/` on Linux (see `scripts/install.sh`).
 
 _To be filled during the setup step: theme matching, custom commands, confirmation
 policies._

@@ -8,6 +8,14 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
+# lazygit reads its config from a platform-specific directory:
+# macOS → ~/Library/Application Support/lazygit, Linux → ~/.config/lazygit.
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  LAZYGIT_DIR="$HOME/Library/Application Support/lazygit"
+else
+  LAZYGIT_DIR="$HOME/.config/lazygit"
+fi
+
 # ---------------------------------------------------------------------------
 # Link manifest: repo-relative source -> absolute target.
 # A source that does not exist yet (tool not configured so far) is skipped,
@@ -31,7 +39,7 @@ TARGETS=(
   "$HOME/.config/tmux"
   "$HOME/.config/nvim"
   "$HOME/.config/yazi"
-  "$HOME/Library/Application Support/lazygit"
+  "$LAZYGIT_DIR"
 )
 
 timestamp() { date +%Y%m%d-%H%M%S; }

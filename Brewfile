@@ -1,5 +1,9 @@
-# arronflow — tool dependencies.
+# arronflow — tool dependencies (macOS).
 # Install everything:  brew bundle install
+#
+# macOS-only: `cask` is a Homebrew-macOS concept. On Linux, scripts/bootstrap.sh
+# installs the same stack via distro packages (pacman/apt/dnf) plus official
+# GitHub release binaries in ~/.local/bin.
 
 # Core terminal emulator (the app itself)
 cask "ghostty"

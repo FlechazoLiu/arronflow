@@ -114,6 +114,9 @@ renaming back.
 External requirements, all already satisfied by this repo's Brewfile or
 macOS: Neovim ≥ 0.11.2, Git, a C compiler (Xcode CLT's clang, for
 treesitter parsers), `rg` + `fd` (pickers), the Maple Mono NF Nerd Font.
+On Linux, `scripts/bootstrap.sh` covers the same list: the official Neovim
+release (distro packages lag behind 0.11), the distro's compiler toolchain,
+and the Maple font from its GitHub release.
 
 ## Our configuration
 
