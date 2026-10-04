@@ -273,9 +273,6 @@ ensure_prereqs() { # small plumbing set for the selected tools (Linux only)
     if [[ $t == nvim ]]; then
       if [[ $PKG == apt ]]; then base+=(build-essential); else base+=(gcc make); fi
     fi
-    if [[ $t == zsh ]] && ! have git; then
-      install_tool git   # the Oh My Zsh clones need git
-    fi
   done
   printf 'PREREQ  %s\n' "${base[*]}"
   case "$PKG" in
@@ -289,6 +286,12 @@ ensure_prereqs() { # small plumbing set for the selected tools (Linux only)
       ;;
     dnf) run_root dnf install -y "${base[@]}" ;;
   esac
+  for t in "${WANT[@]}"; do
+    if [[ $t == zsh ]] && ! have git; then
+      install_tool git   # the Oh My Zsh clones need git — AFTER the base set,
+                         # so a stale apt index has been refreshed already
+    fi
+  done
   return 0
 }
 
