@@ -30,17 +30,34 @@ is_interactive() { [[ -t 0 && -t 1 ]]; }
 # --- Prompts (EOF-safe; set -e survives closed stdin) ------------------------
 
 ask() { # ask <prompt> <varname> — answer in $varname, "" on EOF
-  local __ans=""
-  read -r -p "$1" __ans || __ans=""
-  printf -v "$2" '%s' "$__ans"
-  return 0
+  # No `local` in here, on purpose. `read` assigns the variable the caller
+  # NAMED, resolved dynamically up the call stack; an intermediate local
+  # would shadow it and the caller would always see "" — every answer
+  # silently becoming the default. (Found on the Ubuntu VM: a typed "y"
+  # was declined.) `|| true` keeps partial input delivered before EOF
+  # (Ctrl+D instead of Enter) and survives set -e; EOF alone still sets "".
+  read -r -p "$1" "$2" || true
 }
 
 confirm() { # confirm <prompt> [default y|n] — exit 0 = yes
-  local __ans=""
-  ask "$1" __ans
-  __ans="${__ans:-${2:-}}"
-  case "$__ans" in [Yy] | [Yy][Ee][Ss]) return 0 ;; *) return 1 ;; esac
+  local __ans="" __def="${2:-n}"
+  while true; do
+    ask "$1" __ans
+    case "$__ans" in
+      [Yy] | [Yy][Ee][Ss]) return 0 ;;
+      [Nn] | [Nn][Oo]) return 1 ;;
+      "")
+        if [[ $__def == y ]]; then return 0; fi
+        return 1
+        ;;
+      *)
+        # Non-empty but unrecognized (typo, full-width "ｙ" from an IME):
+        # echo what arrived and re-ask. An empty line or EOF exits via the
+        # branch above with the default, so the loop cannot spin on a pipe.
+        printf 'arronflow: please answer y or n (you typed "%s").\n' "$__ans" >&2
+        ;;
+    esac
+  done
 }
 
 # Numbered multi-select. <varname> receives the chosen items (space
